@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useContext } from "react";
 import {
   Form,
   Button,
@@ -8,13 +8,16 @@ import {
   Spinner,
   Toast,
 } from "react-bootstrap";
+import { useHistory } from "react-router-dom";
+import Context from "../store/context";
 
 const Auth = () => {
   const [signIn, setSignIn] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [show, setShow] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-
+  const ctx = useContext(Context);
+  const history = useHistory();
   const emailRef = useRef();
   const passwordRef = useRef();
   const confirmPasswordRef = useRef();
@@ -22,6 +25,7 @@ const Auth = () => {
   const onClickHandler = () => {
     setSignIn(!signIn);
   };
+
   const content = (
     <Spinner animation="border" role="status" variant="dark">
       <span className="visually-hidden">Loading...</span>
@@ -44,8 +48,8 @@ const Auth = () => {
       }
 
       const endPointUrl = signIn
-        ? `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyBezG9y2vzN3ZEoEkEMYo68vi3GYFkJ99Q`
-        : `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyBezG9y2vzN3ZEoEkEMYo68vi3GYFkJ99Q`;
+        ? `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${ctx.apiKey}`
+        : `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${ctx.apiKey}`;
 
       const response = await fetch(endPointUrl, {
         method: "POST",
@@ -61,6 +65,12 @@ const Auth = () => {
       const data = await response.json();
       if (response.ok) {
         console.log("user has sucessfully signed Up");
+        if (signIn) {
+          ctx.login(data.idToken);
+          history.replace("/welcome");
+        } else {
+          setSignIn(true);
+        }
       } else {
         const errorMessage = data.error.message;
         throw new Error(errorMessage);
