@@ -66,6 +66,7 @@ const Auth = () => {
       if (response.ok) {
         console.log("user has sucessfully signed Up");
         if (signIn) {
+          console.log(data.idToken);
           ctx.login(data.idToken);
           history.replace("/welcome");
         } else {

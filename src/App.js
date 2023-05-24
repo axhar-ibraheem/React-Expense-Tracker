@@ -2,6 +2,7 @@ import "./App.css";
 import { Switch, Route } from "react-router-dom";
 import Auth from "./Pages/Auth";
 import Welcome from "./Pages/Welcome";
+import ProfileUpdate from "./Pages/ProfileUpdate";
 
 function App() {
   return (
@@ -11,6 +12,9 @@ function App() {
       </Route>
       <Route path="/welcome">
         <Welcome />
+      </Route>
+      <Route path="/profileupdate">
+        <ProfileUpdate></ProfileUpdate>
       </Route>
     </Switch>
   );

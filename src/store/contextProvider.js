@@ -2,7 +2,7 @@ import { useReducer } from "react";
 import Context from "./context";
 
 const initialState = {
-  idToken: localStorage.getItem("IdToken"),
+  idToken: localStorage.getItem("idToken"),
 };
 const reducer = (state, action) => {
   switch (action.type) {
