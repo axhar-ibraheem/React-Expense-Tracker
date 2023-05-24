@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { Container, Col, Row, Form, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import Context from "../store/context";
@@ -39,6 +39,34 @@ const ProfileUpdate = () => {
     } finally {
     }
   };
+
+  useEffect(() => {
+    async function getUserInfo() {
+      const response = await fetch(
+        `https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=${ctx.apiKey}`,
+        {
+          method: "POST",
+          body: JSON.stringify({
+            idToken: ctx.idToken,
+          }),
+          headers: {
+            "Content-type": "application/json",
+          },
+        }
+      );
+      const data = await response.json();
+      if (response.ok) {
+        const { users } = data;
+        users.forEach(
+          (ele) => (
+            (nameRef.current.value = ele.displayName),
+            (photoUrlRef.current.value = ele.photoUrl)
+          )
+        );
+      }
+    }
+    getUserInfo();
+  }, []);
 
   return (
     <Container className="py-3">
