@@ -63,6 +63,9 @@ const ProfileUpdate = () => {
             (photoUrlRef.current.value = ele.photoUrl)
           )
         );
+      } else {
+        const error = data.error.message;
+        console.log(error);
       }
     }
     getUserInfo();

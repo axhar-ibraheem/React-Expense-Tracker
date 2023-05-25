@@ -1,13 +1,5 @@
 import React, { useRef, useState, useContext } from "react";
-import {
-  Form,
-  Button,
-  Container,
-  Row,
-  Col,
-  Spinner,
-  Toast,
-} from "react-bootstrap";
+import { Form, Button, Container, Spinner, Toast, Card } from "react-bootstrap";
 import { useHistory } from "react-router-dom";
 import Context from "../store/context";
 
@@ -85,74 +77,75 @@ const Auth = () => {
   };
 
   return (
-    <Container className="">
-      <Row className="justify-content-center mt-5 ">
-        <Col className="mt-5 mb-5 px-3" md={5}>
-          <Form onSubmit={onSubmitHandler} className="pb-5 px-4 shadow ">
-            <div className="text-center py-3">
-              <h3 className="fw-bold text-success">
-                {signIn ? "Login" : "Sign Up"}
-              </h3>
-            </div>
-            <Form.Group className="mb-3" controlId="formBasicEmail">
-              <Form.Label className="fw-bold">Email address</Form.Label>
+    <Container
+      className=" d-flex align-items-center justify-content-center"
+      style={{ minHeight: "100vh" }}
+    >
+      <Card style={{ maxWidth: "32rem" }} className=" border-0 w-100">
+        <Form onSubmit={onSubmitHandler} className="pb-4 shadow px-4">
+          <div className="text-center py-3">
+            <h3 className="fw-bold text-success">
+              {signIn ? "Login" : "Sign Up"}
+            </h3>
+          </div>
+          <Form.Group className="mb-3" controlId="formBasicEmail">
+            <Form.Label className="fw-bold">Email address</Form.Label>
+            <Form.Control
+              ref={emailRef}
+              type="email"
+              placeholder="Enter email"
+            />
+          </Form.Group>
+          <Form.Group className="mb-3" controlId="formBasicPassword">
+            <Form.Label className="fw-bold">Password</Form.Label>
+            <Form.Control
+              ref={passwordRef}
+              type="password"
+              placeholder="Password"
+            />
+          </Form.Group>
+          {!signIn && (
+            <Form.Group className="mb-3" controlId="formBasicConfirmPassword">
+              <Form.Label className="fw-bold">Confirm Password</Form.Label>
               <Form.Control
-                ref={emailRef}
-                type="email"
-                placeholder="Enter email"
-              />
-            </Form.Group>
-            <Form.Group className="mb-3" controlId="formBasicPassword">
-              <Form.Label className="fw-bold">Password</Form.Label>
-              <Form.Control
-                ref={passwordRef}
+                ref={confirmPasswordRef}
                 type="password"
-                placeholder="Password"
+                placeholder="Confirm Password"
               />
             </Form.Group>
-            {!signIn && (
-              <Form.Group className="mb-3" controlId="formBasicConfirmPassword">
-                <Form.Label className="fw-bold">Confirm Password</Form.Label>
-                <Form.Control
-                  ref={confirmPasswordRef}
-                  type="password"
-                  placeholder="Confirm Password"
-                />
-              </Form.Group>
-            )}
-            {signIn ? (
-              <Button className="w-100" variant="success" type="submit">
-                {isLoading ? content : "Login"}
-              </Button>
-            ) : (
-              <Button className="w-100" variant="success" type="submit">
-                {isLoading ? content : "Sign Up"}
-              </Button>
-            )}
-            {show && (
-              <Toast
-                className="w-100 mt-3 bg-danger"
-                onClose={() => setShow(false)}
-                delay={4000}
-                autohide
-              >
-                <Toast.Header className="d-flex fw-bold justify-content-between">
-                  !!
-                </Toast.Header>
-                <Toast.Body className="fw-bold">{errorMessage}</Toast.Body>
-              </Toast>
-            )}
-          </Form>
+          )}
+          {signIn ? (
+            <Button className="w-100 mt-2" variant="success" type="submit">
+              {isLoading ? content : "Login"}
+            </Button>
+          ) : (
+            <Button className="w-100 mt-2" variant="success" type="submit">
+              {isLoading ? content : "Sign Up"}
+            </Button>
+          )}
+          {show && (
+            <Toast
+              className="w-100 mt-3 bg-danger"
+              onClose={() => setShow(false)}
+              delay={4000}
+              autohide
+            >
+              <Toast.Header className="d-flex fw-bold justify-content-between">
+                !!
+              </Toast.Header>
+              <Toast.Body className="fw-bold">{errorMessage}</Toast.Body>
+            </Toast>
+          )}
+        </Form>
 
-          {
-            <div className="text-center mt-3">
-              <Button variant="dark" onClick={onClickHandler} className="">
-                {signIn ? "First Time, then Sign Up" : "Have an Account? Login"}
-              </Button>
-            </div>
-          }
-        </Col>
-      </Row>
+        {
+          <div className="text-center mt-3">
+            <Button variant="dark" onClick={onClickHandler} className="">
+              {signIn ? "First Time, then Sign Up" : "Have an Account? Login"}
+            </Button>
+          </div>
+        }
+      </Card>
     </Container>
   );
 };
