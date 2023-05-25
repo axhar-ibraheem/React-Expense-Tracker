@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { Container, Col, Row, Form, Button } from "react-bootstrap";
+import { Container, Col, Row, Form, Button, Alert } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import Context from "../store/context";
 import Logout from "../Components/Logout";
@@ -8,6 +8,7 @@ const ProfileUpdate = () => {
   const photoUrlRef = useRef();
   const ctx = useContext(Context);
   console.log(ctx);
+  const [show, setShow] = useState(true);
   const onUpdateProfile = async (e) => {
     try {
       e.preventDefault();
@@ -38,6 +39,29 @@ const ProfileUpdate = () => {
       }
     } catch (e) {
     } finally {
+    }
+  };
+
+  const onVerifyEmailHandler = async () => {
+    const response = await fetch(
+      `https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=${ctx.apiKey}`,
+      {
+        method: "POST",
+        body: JSON.stringify({
+          requestType: "VERIFY_EMAIL",
+          idToken: ctx.idToken,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const data = await response.json();
+    if (response.ok) {
+      console.log(data);
+    } else {
+      const error = data.error.message;
+      console.log(error);
     }
   };
 
@@ -92,14 +116,29 @@ const ProfileUpdate = () => {
           </div>
         </Col>
       </Row>
+      {show && (
+        <Alert
+          style={{ maxWidth: "25rem" }}
+          variant="danger"
+          onClose={() => setShow(false)}
+          dismissible
+          className="mt-3 mx-auto"
+        >
+          Your email is not verified yet!{" "}
+          <Button variant="danger" onClick={onVerifyEmailHandler}>
+            Verify it
+          </Button>
+        </Alert>
+      )}
       <div className="d-flex justify-content-end my-2">
         <Logout />
       </div>
 
       <Form className="shadow rounded py-3 mt-2" onSubmit={onUpdateProfile}>
-        <div className="text-center py-4">
+        <div className="text-center pt-4">
           <h4 className="fw-bold text-success">Contact Details</h4>
         </div>
+
         <Row className="mb-3 justify-content-center px-4">
           <Form.Group className="" as={Col} lg={4} controlId="formGridEmail">
             <Form.Label className="fw-bold fs-6">

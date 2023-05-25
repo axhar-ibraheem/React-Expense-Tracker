@@ -6,6 +6,7 @@ import ProfileUpdate from "./Pages/ProfileUpdate";
 import Context from "./store/context";
 import React, { useContext } from "react";
 import ForgotPassword from "./Pages/ForgotPassword";
+import Expenses from "./Components/Expenses";
 function App() {
   const ctx = useContext(Context);
 
