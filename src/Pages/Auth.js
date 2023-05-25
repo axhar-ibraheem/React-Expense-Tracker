@@ -1,7 +1,9 @@
 import React, { useRef, useState, useContext } from "react";
 import { Form, Button, Container, Spinner, Toast, Card } from "react-bootstrap";
-import { useHistory } from "react-router-dom";
+import { useHistory, Link } from "react-router-dom";
 import Context from "../store/context";
+import LoadingSpinner from "../Components/LoadingSpinner";
+import ErrorMessage from "../Components/ErrorMessage";
 
 const Auth = () => {
   const [signIn, setSignIn] = useState(true);
@@ -17,12 +19,6 @@ const Auth = () => {
   const onClickHandler = () => {
     setSignIn(!signIn);
   };
-
-  const content = (
-    <Spinner animation="border" role="status" variant="dark">
-      <span className="visually-hidden">Loading...</span>
-    </Spinner>
-  );
 
   const onSubmitHandler = async (e) => {
     try {
@@ -115,26 +111,24 @@ const Auth = () => {
             </Form.Group>
           )}
           {signIn ? (
-            <Button className="w-100 mt-2" variant="success" type="submit">
-              {isLoading ? content : "Login"}
-            </Button>
+            <>
+              {" "}
+              <Button className="w-100 mt-2" variant="success" type="submit">
+                {isLoading ? <LoadingSpinner /> : "Login"}
+              </Button>
+              <div className="mt-2 text-center">
+                <Link className="text-decoration-none" to="/resetPassword">
+                  Forgot Password
+                </Link>
+              </div>
+            </>
           ) : (
             <Button className="w-100 mt-2" variant="success" type="submit">
-              {isLoading ? content : "Sign Up"}
+              {isLoading ? <LoadingSpinner /> : "Sign Up"}
             </Button>
           )}
           {show && (
-            <Toast
-              className="w-100 mt-3 bg-danger"
-              onClose={() => setShow(false)}
-              delay={4000}
-              autohide
-            >
-              <Toast.Header className="d-flex fw-bold justify-content-between">
-                !!
-              </Toast.Header>
-              <Toast.Body className="fw-bold">{errorMessage}</Toast.Body>
-            </Toast>
+            <ErrorMessage errorMessage={errorMessage} setShow={setShow} />
           )}
         </Form>
 
