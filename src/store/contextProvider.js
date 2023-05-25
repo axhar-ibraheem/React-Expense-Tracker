@@ -13,19 +13,31 @@ const reducer = (state, action) => {
         idToken: action.token,
       };
     }
+    case "LOGOUT": {
+      localStorage.removeItem("idToken");
+      return {
+        ...state,
+        idToken: "",
+      };
+    }
   }
 };
+
 const ContextProvider = (props) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const loginHandler = (token) => {
     dispatch({ type: "LOGIN", token: token });
   };
+  const logoutHandler = () => {
+    dispatch({ type: "LOGOUT" });
+  };
 
   const ExpenseContext = {
     idToken: state.idToken,
     apiKey: "AIzaSyBezG9y2vzN3ZEoEkEMYo68vi3GYFkJ99Q",
     login: loginHandler,
+    logout: logoutHandler,
   };
 
   return (

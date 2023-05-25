@@ -2,10 +2,12 @@ import { Container, Row, Col, Button, Alert } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import Context from "../store/context";
 import { useContext, useState } from "react";
+import Logout from "../Components/Logout";
 
 const Welcome = () => {
   const ctx = useContext(Context);
   const [show, setShow] = useState(true);
+
   const onVerifyEmailHandler = async () => {
     const response = await fetch(
       `https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=${ctx.apiKey}`,
@@ -45,6 +47,9 @@ const Welcome = () => {
           </div>
         </Col>
       </Row>
+      <div className="d-flex justify-content-end mt-2">
+        <Logout />
+      </div>
 
       <Alert
         style={{ maxWidth: "35rem" }}

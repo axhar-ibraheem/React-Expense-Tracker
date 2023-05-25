@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import { Container, Col, Row, Form, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import Context from "../store/context";
+import Logout from "../Components/Logout";
 const ProfileUpdate = () => {
   const nameRef = useRef();
   const photoUrlRef = useRef();
@@ -91,6 +92,10 @@ const ProfileUpdate = () => {
           </div>
         </Col>
       </Row>
+      <div className="d-flex justify-content-end my-2">
+        <Logout />
+      </div>
+
       <Form className="shadow rounded py-3 mt-2" onSubmit={onUpdateProfile}>
         <div className="text-center py-4">
           <h4 className="fw-bold text-success">Contact Details</h4>
