@@ -4,11 +4,12 @@ import { Link } from "react-router-dom";
 import Context from "../store/context";
 import LoadingSpinner from "../Components/LoadingSpinner";
 import ErrorMessage from "../Components/ErrorMessage";
+import axios from "axios";
 
 const ForgotPassword = () => {
   const emailRef = useRef();
   const ctx = useContext(Context);
-  const [message, setMessage] = useState(false);
+  const [confirmMessage, setConfirmMessage] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [show, setShow] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -18,31 +19,28 @@ const ForgotPassword = () => {
       e.preventDefault();
       setIsLoading(true);
       const enteredEmail = emailRef.current.value;
-      const response = await fetch(
+      const response = await axios.post(
         `https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=${ctx.apiKey}`,
         {
-          method: "POST",
-          body: JSON.stringify({
-            requestType: "PASSWORD_RESET",
-            email: enteredEmail,
-          }),
+          requestType: "PASSWORD_RESET",
+          email: enteredEmail,
+        },
+        {
           headers: {
             "Content-Type": "application/json",
           },
         }
       );
-      const data = await response.json();
-      if (response.ok) {
+      const data = response.data;
+      if (response.status === 200) {
         console.log(data);
-        setMessage(true);
-      } else {
-        const errorMessage = data.error.message;
-        throw new Error(errorMessage);
+        setConfirmMessage(true);
       }
     } catch (error) {
-      setErrorMessage(error.message);
+      const message = error.response.data.error.message;
+      setErrorMessage(message);
       setShow(true);
-      console.log(error.message);
+      console.log(message);
     } finally {
       setIsLoading(false);
     }
@@ -59,7 +57,7 @@ const ForgotPassword = () => {
               Enter the email with which you have registered
             </Card.Text>
           </div>
-          {message && (
+          {confirmMessage && (
             <Alert variant="info">
               A password reset link has been sent to your Mail Id
             </Alert>
@@ -70,6 +68,7 @@ const ForgotPassword = () => {
                 ref={emailRef}
                 type="email"
                 placeholder="Enter email"
+                required
               />
             </Form.Group>
             <div className="text-center ">

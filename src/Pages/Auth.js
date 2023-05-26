@@ -4,6 +4,7 @@ import { useHistory, Link } from "react-router-dom";
 import Context from "../store/context";
 import LoadingSpinner from "../Components/LoadingSpinner";
 import ErrorMessage from "../Components/ErrorMessage";
+import axios from "axios";
 
 const Auth = () => {
   const [signIn, setSignIn] = useState(true);
@@ -31,7 +32,9 @@ const Auth = () => {
       if (!signIn) {
         enteredConfirmPassword = confirmPasswordRef.current.value;
         if (enteredConfirmPassword !== enteredPassword) {
-          throw new Error("Passwords don't match");
+          setErrorMessage("Passwords don't match");
+          setShow(true);
+          return;
         }
       }
 
@@ -39,33 +42,31 @@ const Auth = () => {
         ? `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${ctx.apiKey}`
         : `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${ctx.apiKey}`;
 
-      const response = await fetch(endPointUrl, {
-        method: "POST",
-        body: JSON.stringify({
+      const response = await axios.post(
+        endPointUrl,
+        {
           email: enteredEmail,
           password: enteredPassword,
           returnSecureToken: true,
-        }),
-        headers: {
-          "Content-Type": "application/json",
         },
-      });
-      const data = await response.json();
-      if (response.ok) {
-        console.log("user has sucessfully signed Up");
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const data = response.data;
+      console.log(response.data);
+      if (response.status === 200) {
         if (signIn) {
-          console.log(data.idToken);
-          ctx.login(data.idToken);
+          ctx.login(data.idToken, data.email);
           history.replace("/welcome");
         } else {
           setSignIn(true);
         }
-      } else {
-        const errorMessage = data.error.message;
-        throw new Error(errorMessage);
       }
-    } catch (e) {
-      setErrorMessage(e.message);
+    } catch (error) {
+      setErrorMessage(error.response.data.error.message);
       setShow(true);
     } finally {
       setIsLoading(false);
@@ -90,6 +91,7 @@ const Auth = () => {
               ref={emailRef}
               type="email"
               placeholder="Enter email"
+              required
             />
           </Form.Group>
           <Form.Group className="mb-3" controlId="formBasicPassword">
@@ -98,6 +100,7 @@ const Auth = () => {
               ref={passwordRef}
               type="password"
               placeholder="Password"
+              required
             />
           </Form.Group>
           {!signIn && (
@@ -107,6 +110,7 @@ const Auth = () => {
                 ref={confirmPasswordRef}
                 type="password"
                 placeholder="Confirm Password"
+                required
               />
             </Form.Group>
           )}

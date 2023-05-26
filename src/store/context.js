@@ -5,6 +5,7 @@ const Context = React.createContext({
   login: () => {},
   logout: () => {},
   apiKey: "",
+  email: "",
 });
 
 export default Context;

@@ -3,95 +3,92 @@ import { Container, Col, Row, Form, Button, Alert } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import Context from "../store/context";
 import Logout from "../Components/Logout";
+import axios from "axios";
 const ProfileUpdate = () => {
   const nameRef = useRef();
   const photoUrlRef = useRef();
   const ctx = useContext(Context);
   console.log(ctx);
   const [show, setShow] = useState(true);
+
   const onUpdateProfile = async (e) => {
     try {
       e.preventDefault();
       const enteredName = nameRef.current.value;
       const enteredPhotoUrl = photoUrlRef.current.value;
 
-      const response = await fetch(
+      const response = await axios.post(
         `https://identitytoolkit.googleapis.com/v1/accounts:update?key=${ctx.apiKey}`,
+
         {
-          method: "POST",
-          body: JSON.stringify({
-            displayName: enteredName,
-            photoUrl: enteredPhotoUrl,
-            returnSecureToken: true,
-            idToken: ctx.idToken,
-          }),
+          displayName: enteredName,
+          photoUrl: enteredPhotoUrl,
+          returnSecureToken: true,
+          idToken: ctx.idToken,
+        },
+        {
           headers: {
             "Content-Type": "application/json",
           },
         }
       );
-      const data = await response.json();
-      if (response.ok) {
+
+      const data = response.data;
+      if (response.status === 200) {
         console.log(data);
-      } else {
-        const errorMessage = data.error;
-        console.log(errorMessage);
       }
-    } catch (e) {
+    } catch (error) {
     } finally {
     }
   };
 
   const onVerifyEmailHandler = async () => {
-    const response = await fetch(
+    const response = await axios.post(
       `https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=${ctx.apiKey}`,
       {
-        method: "POST",
-        body: JSON.stringify({
-          requestType: "VERIFY_EMAIL",
-          idToken: ctx.idToken,
-        }),
+        requestType: "VERIFY_EMAIL",
+        idToken: ctx.idToken,
+      },
+      {
         headers: {
           "Content-Type": "application/json",
         },
       }
     );
-    const data = await response.json();
-    if (response.ok) {
+    const data = response.data;
+    if (response.status === 200) {
       console.log(data);
     } else {
-      const error = data.error.message;
-      console.log(error);
+      //   const error = data.error.message;
+      //   console.log(error);
     }
   };
 
   useEffect(() => {
     async function getUserInfo() {
-      const response = await fetch(
-        `https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=${ctx.apiKey}`,
-        {
-          method: "POST",
-          body: JSON.stringify({
+      try {
+        const response = await axios.post(
+          `https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=${ctx.apiKey}`,
+          {
             idToken: ctx.idToken,
-          }),
-          headers: {
-            "Content-type": "application/json",
           },
-        }
-      );
-      const data = await response.json();
-      if (response.ok) {
-        const { users } = data;
-        users.forEach(
-          (ele) => (
-            (nameRef.current.value = ele.displayName),
-            (photoUrlRef.current.value = ele.photoUrl)
-          )
+          {
+            headers: {
+              "Content-type": "application/json",
+            },
+          }
         );
-      } else {
-        const error = data.error.message;
-        console.log(error);
-      }
+        const data = response.data;
+        if (response.status === 200) {
+          const { users } = data;
+          users.forEach(
+            (ele) => (
+              (nameRef.current.value = ele.displayName),
+              (photoUrlRef.current.value = ele.photoUrl)
+            )
+          );
+        }
+      } catch (error) {}
     }
     getUserInfo();
   }, []);
@@ -156,12 +153,12 @@ const ProfileUpdate = () => {
             </Form.Label>
             <Form.Control ref={photoUrlRef} type="text" />
           </Form.Group>
-          <Col lg={1} className="align-self-end">
+          <Col lg="auto" className="align-self-end">
             <Button type="submit" variant="info" className="mt-4 mt-lg-0 w-100">
               Update
             </Button>
           </Col>
-          <Col lg={1} className="align-self-end">
+          <Col lg="auto" className="align-self-end">
             <Button variant="danger" className="mt-4 mt-lg-0 w-100">
               Cancel
             </Button>

@@ -19,9 +19,11 @@ function App() {
       <Route path="/resetPassword">
         <ForgotPassword />
       </Route>
+
       <Route path="/auth">
         <Auth />
       </Route>
+
       {isLoggedIn && (
         <Route Route path="/welcome">
           <Welcome />

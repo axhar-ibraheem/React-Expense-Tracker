@@ -1,20 +1,59 @@
 import { Form, Row, Col, Button, Container, Accordion } from "react-bootstrap";
-import { useRef } from "react";
+import { useContext, useRef, useEffect } from "react";
+import axios from "axios";
+import Context from "../store/context";
 
 const ExpenseForm = (props) => {
   const moneyRef = useRef();
   const descriptionRef = useRef();
   const categoryRef = useRef();
-  const onAddExpenseHandler = (e) => {
+  const ctx = useContext(Context);
+  const userEmail = ctx.email.replace(/[.]/g, "");
+
+  const onAddExpenseHandler = async (e) => {
     e.preventDefault();
-    const obj = {
-      money: moneyRef.current.value,
-      description: descriptionRef.current.value,
-      category: categoryRef.current.value,
-    };
-    console.log(obj);
-    props.onAddExpense(obj);
+    const expenseItem = [
+      {
+        money: moneyRef.current.value,
+        description: descriptionRef.current.value,
+        category: categoryRef.current.value,
+      },
+    ];
+    const response = await axios.post(
+      `https://react-expense-tracker-25b41-default-rtdb.firebaseio.com/expenses${userEmail}.json`,
+      ...expenseItem,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    const data = response.data;
+    if (response.status === 200) {
+      expenseItem.forEach((item) => (item.id = data.name));
+      props.onAddExpense(expenseItem);
+    }
   };
+
+  useEffect(() => {
+    async function getExpenses() {
+      const response = await axios.get(
+        `https://react-expense-tracker-25b41-default-rtdb.firebaseio.com/expenses${userEmail}.json`
+      );
+      const data = response.data;
+      if (response.status === 200) {
+        const arr = [];
+        for (let key in data) {
+          let obj = { id: key, ...data[key] };
+          arr.push(obj);
+        }
+        props.onAddExpense(arr);
+      }
+    }
+    getExpenses();
+  }, []);
+
   return (
     <Container className="">
       <Row>
@@ -39,7 +78,7 @@ const ExpenseForm = (props) => {
                       <Form.Label className="fw-bold fs-6">
                         Money Spent
                       </Form.Label>
-                      <Form.Control type="number" ref={moneyRef} />
+                      <Form.Control type="number" ref={moneyRef} required />
                     </Form.Group>
                     <Form.Group
                       className="mb-2 mb-lg-0"
@@ -50,7 +89,7 @@ const ExpenseForm = (props) => {
                       <Form.Label className="fw-bold fs-6">
                         Expense Description
                       </Form.Label>
-                      <Form.Control ref={descriptionRef} type="text" />
+                      <Form.Control ref={descriptionRef} type="text" required />
                     </Form.Group>
                     <Form.Group
                       as={Col}
