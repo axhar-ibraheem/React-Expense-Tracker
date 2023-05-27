@@ -1,5 +1,5 @@
-import { Col, Container, ListGroup, Row, Card } from "react-bootstrap";
-
+import { Col, Container, ListGroup, Row, Card, Button } from "react-bootstrap";
+import LoadingSpinner from "./LoadingSpinner";
 const ExpenseItems = (props) => {
   console.log(props);
   return (
@@ -10,15 +10,33 @@ const ExpenseItems = (props) => {
       >
         <ListGroup variant="flush">
           {props.expenses.map((item) => (
-            <ListGroup.Item key={item.id} className="mb-2 d-flex">
+            <ListGroup.Item
+              key={item.id}
+              className="mb-2 d-flex align-items-center"
+            >
               <Col xs="6">
-                <span className="fw-bold ">{item.description}</span>
+                <p className="fw-bold ">{item.description}</p>
+                <p className="fw-bold mx-auto">{item.category} </p>
               </Col>
               <Col xs="2">
-                <span className="fw-bold mx-auto">{item.category}</span>
-              </Col>
-              <Col xs="4" className="d-flex">
                 <span className="fw-bold fs-5 ms-auto text-danger">{`$${item.money}`}</span>
+              </Col>
+              <Col xs="4" className="d-flex justify-content-end">
+                <div>
+                  <Button
+                    onClick={() => props.onEdit(item)}
+                    variant="info"
+                    className="me-2"
+                  >
+                    Edit
+                  </Button>
+                  <Button
+                    onClick={() => props.onDelete(item.id)}
+                    variant="danger"
+                  >
+                    Delete
+                  </Button>
+                </div>
               </Col>
             </ListGroup.Item>
           ))}
