@@ -1,21 +1,23 @@
-import React, { useRef, useState, useContext } from "react";
-import { Form, Button, Container, Spinner, Toast, Card } from "react-bootstrap";
+import React, { useRef, useState } from "react";
+import { Form, Button, Container, Card } from "react-bootstrap";
 import { useHistory, Link } from "react-router-dom";
-import Context from "../store/context";
 import LoadingSpinner from "../Components/LoadingSpinner";
 import ErrorMessage from "../Components/ErrorMessage";
 import axios from "axios";
-
+import { login } from "../store/authSlice";
+import { useDispatch, useSelector } from "react-redux";
 const Auth = () => {
   const [signIn, setSignIn] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [show, setShow] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const ctx = useContext(Context);
   const history = useHistory();
   const emailRef = useRef();
   const passwordRef = useRef();
   const confirmPasswordRef = useRef();
+
+  const apiKey = useSelector((state) => state.auth.apiKey);
+  const dispatch = useDispatch();
 
   const onClickHandler = () => {
     setSignIn(!signIn);
@@ -39,8 +41,8 @@ const Auth = () => {
       }
 
       const endPointUrl = signIn
-        ? `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${ctx.apiKey}`
-        : `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${ctx.apiKey}`;
+        ? `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${apiKey}`
+        : `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${apiKey}`;
 
       const response = await axios.post(
         endPointUrl,
@@ -57,9 +59,10 @@ const Auth = () => {
       );
       const data = response.data;
       console.log(response.data);
+
       if (response.status === 200) {
         if (signIn) {
-          ctx.login(data.idToken, data.email);
+          dispatch(login({ idToken: data.idToken, email: data.email }));
           history.replace("/welcome");
         } else {
           setSignIn(true);
@@ -138,7 +141,7 @@ const Auth = () => {
 
         {
           <div className="text-center mt-3">
-            <Button variant="dark" onClick={onClickHandler} className="">
+            <Button variant="dark" onClick={onClickHandler}>
               {signIn ? "First Time, then Sign Up" : "Have an Account? Login"}
             </Button>
           </div>

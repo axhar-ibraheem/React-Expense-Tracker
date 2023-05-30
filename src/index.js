@@ -6,15 +6,15 @@ import reportWebVitals from "./reportWebVitals";
 import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import "../node_modules/bootstrap-icons/font/bootstrap-icons.min.css";
 import { BrowserRouter } from "react-router-dom/cjs/react-router-dom.min";
-import ContextProvider from "./store/contextProvider";
-
+import store from "./store";
+import { Provider } from "react-redux";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-  <ContextProvider>
+  <Provider store={store}>
     <BrowserRouter>
       <App />
     </BrowserRouter>
-  </ContextProvider>
+  </Provider>
 );
 
 // If you want to start measuring performance in your app, pass a function

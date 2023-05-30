@@ -1,16 +1,13 @@
-import "./App.css";
 import { Switch, Route, Redirect } from "react-router-dom";
 import Auth from "./Pages/Auth";
 import Welcome from "./Pages/Welcome";
 import ProfileUpdate from "./Pages/ProfileUpdate";
-import Context from "./store/context";
-import React, { useContext } from "react";
 import ForgotPassword from "./Pages/ForgotPassword";
-import Expenses from "./Components/Expenses";
-function App() {
-  const ctx = useContext(Context);
+import { useSelector } from "react-redux";
 
-  let isLoggedIn = !!ctx.idToken;
+function App() {
+  const auth = useSelector((state) => state.auth.isAuthenticated);
+
   return (
     <Switch>
       <Route path="/" exact>
@@ -24,12 +21,12 @@ function App() {
         <Auth />
       </Route>
 
-      {isLoggedIn && (
+      {auth && (
         <Route Route path="/welcome">
           <Welcome />
         </Route>
       )}
-      {isLoggedIn && (
+      {auth && (
         <Route path="/profileupdate">
           <ProfileUpdate></ProfileUpdate>
         </Route>

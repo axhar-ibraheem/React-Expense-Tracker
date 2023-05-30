@@ -1,13 +1,9 @@
-import { Container, Row, Col, Button, Alert } from "react-bootstrap";
+import { Container, Row, Col } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import Context from "../store/context";
-import { useContext, useState } from "react";
 import Logout from "../Components/Logout";
 import Expenses from "../Components/Expenses";
 
 const Welcome = () => {
-  const ctx = useContext(Context);
-
   return (
     <Container className="py-3">
       <Row className="align-items-center border-bottom border-2 border-success pb-3">

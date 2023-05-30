@@ -1,7 +1,16 @@
-import { Form, Row, Col, Button, Container, Collapse } from "react-bootstrap";
-import { useContext, useRef, useEffect, useState, useCallback } from "react";
+import {
+  Form,
+  Row,
+  Col,
+  Button,
+  Container,
+  Collapse,
+  Alert,
+} from "react-bootstrap";
+import { useRef, useEffect, useState, useCallback } from "react";
 import axios from "axios";
-import Context from "../store/context";
+import { useSelector, useDispatch } from "react-redux";
+import { addExpense } from "../store/expensesSlice";
 
 const ExpenseForm = (props) => {
   const moneyRef = useRef();
@@ -9,9 +18,16 @@ const ExpenseForm = (props) => {
   const categoryRef = useRef();
   const [open, setOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const ctx = useContext(Context);
-  const userEmail = ctx.email.replace(/[.]/g, "");
+  const [show, setShow] = useState(true);
+  const dispatch = useDispatch();
+  const email = useSelector((state) => state.auth.email);
+  const userEmail = email.replace(/[.]/g, "");
+  const expenses = useSelector((state) => state.expenses.expenses);
 
+  const minimum = expenses.reduce((accum, curVal) => {
+    return accum + +curVal.money;
+  }, 0);
+  console.log(minimum);
   const clearInputFields = () => {
     moneyRef.current.value = "";
     descriptionRef.current.value = "";
@@ -21,8 +37,13 @@ const ExpenseForm = (props) => {
     setOpen(!open);
   };
 
+  const onClickHandler = () => {
+    dispatch(addExpense({ expenseItem: [props.item] }));
+    clearInputFields();
+    setIsEditing(false);
+  };
+
   const editExpense = useCallback(() => {
-    console.log(props.item);
     setOpen(true);
     if (props.item.money) {
       moneyRef.current.value = props.item.money;
@@ -63,13 +84,13 @@ const ExpenseForm = (props) => {
 
       const data = response.data;
       console.log(data);
+
       if (response.status === 200) {
-        const arr = [];
+        const expense = [];
         const obj = { id: props.item.id, ...data };
-        arr.push(obj);
-        props.onAddExpense(arr);
+        expense.push(obj);
+        dispatch(addExpense({ expenseItem: expense }));
         setIsEditing(false);
-        clearInputFields();
       }
     } else {
       const response = await axios.post(endPointUrl, ...expenseItem, {
@@ -81,122 +102,114 @@ const ExpenseForm = (props) => {
       const data = response.data;
       if (response.status === 200) {
         expenseItem.forEach((item) => (item.id = data.name));
-        props.onAddExpense(expenseItem);
+        dispatch(addExpense({ expenseItem: expenseItem }));
       }
     }
+    clearInputFields();
   };
-
-  useEffect(() => {
-    async function getExpenses() {
-      const response = await axios.get(
-        `https://react-expense-tracker-25b41-default-rtdb.firebaseio.com/expenses${userEmail}.json`
-      );
-      const data = response.data;
-      if (response.status === 200) {
-        const arr = [];
-        for (let key in data) {
-          let obj = { id: key, ...data[key] };
-          arr.push(obj);
-        }
-        props.onAddExpense(arr);
-      }
-    }
-    getExpenses();
-  }, []);
 
   return (
     <Container className="">
-      <Row>
-        <Col lg="10" className="mx-auto">
-          <div className="text-center mt-2">
-            <Button
-              variant="info"
-              className="fw-bold px-4"
-              onClick={onToggleHandler}
-            >
-              Add Expense
-            </Button>
-          </div>
-          <Collapse in={open}>
-            <div>
-              <Form
-                onSubmit={onAddExpenseHandler}
-                className="shadow rounded py-3 mt-3 bg-info"
+      {minimum > 10000 && (
+        <div className="mx-auto" style={{ maxWidth: "62rem" }}>
+          <Alert variant="success" dismissible onClose={() => setShow(false)}>
+            <div className="d-flex justify-content-between">
+              <p>Go for Premium</p>
+              <Button variant="success">Activate Premium</Button>
+            </div>
+          </Alert>
+        </div>
+      )}
+      <div className="text-center mt-2">
+        <Button
+          variant="info"
+          className="fw-bold px-4"
+          onClick={onToggleHandler}
+        >
+          Add Expense
+        </Button>
+      </div>
+      <Collapse in={open}>
+        <div>
+          <Form
+            style={{ maxWidth: "62rem" }}
+            onSubmit={onAddExpenseHandler}
+            className="shadow rounded py-3 mt-3 bg-info mx-auto "
+          >
+            <Row className="mb-3 justify-content-center px-4 px-lg-0">
+              <Form.Group
+                className="mb-2 mb-lg-0"
+                as={Col}
+                lg={"auto"}
+                controlId="formGridMoney"
               >
-                <Row className="mb-3 justify-content-center px-4 px-lg-0">
-                  <Form.Group
-                    className="mb-2 mb-lg-0"
-                    as={Col}
-                    lg={"auto"}
-                    controlId="formGridEmail"
-                  >
-                    <Form.Label className="fw-bold fs-6">
-                      Money Spent
-                    </Form.Label>
-                    <Form.Control type="number" ref={moneyRef} required />
-                  </Form.Group>
-                  <Form.Group
-                    className="mb-2 mb-lg-0"
-                    as={Col}
-                    lg={4}
-                    controlId="formGridPassword"
-                  >
-                    <Form.Label className="fw-bold fs-6">
-                      Expense Description
-                    </Form.Label>
-                    <Form.Control ref={descriptionRef} type="text" required />
-                  </Form.Group>
-                  <Form.Group
-                    as={Col}
-                    lg={2}
-                    className="mb-2 mb-lg-0"
-                    controlId="formGridPassword"
-                  >
-                    <Form.Label className="fw-bold fs-6">Category</Form.Label>
-                    <Form.Select
-                      ref={categoryRef}
-                      aria-label="Default select example"
-                    >
-                      <option value="Food">Food</option>
-                      <option value="Petrol">Petrol</option>
-                      <option value="Salary">Salary</option>
-                      <option value="Clothing">Clothing</option>
-                    </Form.Select>
-                  </Form.Group>
-                  <Col lg={"auto"} className="align-self-end">
-                    {isEditing ? (
-                      <Button
-                        type="submit"
-                        variant="dark"
-                        className="mt-4 mt-lg-0 w-100"
-                      >
-                        Update Expense
-                      </Button>
-                    ) : (
-                      <Button
-                        type="submit"
-                        variant="dark"
-                        className="mt-4 mt-lg-0 w-100"
-                      >
-                        Add Expense
-                      </Button>
-                    )}
-                  </Col>
-                  {/* <Col lg={"auto"} className="align-self-end">
+                <Form.Label className="fw-bold fs-6">Money Spent</Form.Label>
+                <Form.Control type="number" min={0} ref={moneyRef} required />
+              </Form.Group>
+              <Form.Group
+                className="mb-2 mb-lg-0"
+                as={Col}
+                lg={3}
+                controlId="formGridDescription"
+              >
+                <Form.Label className="fw-bold fs-6">
+                  Expense Description
+                </Form.Label>
+                <Form.Control ref={descriptionRef} type="text" required />
+              </Form.Group>
+              <Form.Group
+                as={Col}
+                lg={3}
+                className="mb-2 mb-lg-0"
+                controlId="formGridCategory"
+              >
+                <Form.Label className="fw-bold fs-6">Category</Form.Label>
+                <Form.Select
+                  ref={categoryRef}
+                  aria-label="Default select example"
+                >
+                  <option value="Food">Food</option>
+                  <option value="Transportation">Transportation</option>
+                  <option value="Salary">Salary</option>
+                  <option value="Health">Health</option>
+                  <option value="Personal Care">Personal Care</option>
+                </Form.Select>
+              </Form.Group>
+
+              {isEditing ? (
+                <Col lg={"auto"} className="align-self-end">
+                  <div className="">
                     <Button
-                      onClick={onCancelHandler}
+                      type="submit"
+                      variant="dark"
+                      className="mt-4 mt-lg-0 "
+                    >
+                      Update Expense
+                    </Button>
+                    <Button
+                      onClick={onClickHandler}
                       variant="danger"
-                      className="mt-4 mt-lg-0 w-100"
+                      className="ms-3 mt-4 mt-lg-0"
                     >
                       Cancel
                     </Button>
-                  </Col> */}
-                </Row>
-              </Form>
-            </div>
-          </Collapse>
-        </Col>
-      </Row>
+                  </div>
+                </Col>
+              ) : (
+                <Col lg={2} className="align-self-end">
+                  <Button
+                    type="submit"
+                    variant="dark"
+                    className="mt-4 mt-lg-0 w-100 d-inline"
+                  >
+                    Add Expense
+                  </Button>
+                </Col>
+              )}
+            </Row>
+          </Form>
+        </div>
+      </Collapse>
     </Container>
   );
 };

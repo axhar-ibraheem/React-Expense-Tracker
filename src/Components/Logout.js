@@ -1,12 +1,12 @@
 import { Button } from "react-bootstrap";
-import Context from "../store/context";
-import { useContext } from "react";
+import { logout } from "../store/authSlice";
+import { useDispatch } from "react-redux";
 
 const Logout = () => {
-  const ctx = useContext(Context);
+  const dispatch = useDispatch();
 
   const onLogoutHandler = () => {
-    ctx.logout();
+    dispatch(logout());
   };
 
   return (

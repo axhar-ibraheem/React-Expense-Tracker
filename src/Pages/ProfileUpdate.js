@@ -1,14 +1,15 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Container, Col, Row, Form, Button, Alert } from "react-bootstrap";
-import { Link } from "react-router-dom";
-import Context from "../store/context";
+
 import Logout from "../Components/Logout";
 import axios from "axios";
+import { useSelector } from "react-redux";
 const ProfileUpdate = () => {
   const nameRef = useRef();
   const photoUrlRef = useRef();
-  const ctx = useContext(Context);
-  console.log(ctx);
+
+  const apiKey = useSelector((state) => state.auth.apiKey);
+  const idToken = useSelector((state) => state.auth.idToken);
   const [show, setShow] = useState(true);
 
   const onUpdateProfile = async (e) => {
@@ -18,13 +19,13 @@ const ProfileUpdate = () => {
       const enteredPhotoUrl = photoUrlRef.current.value;
 
       const response = await axios.post(
-        `https://identitytoolkit.googleapis.com/v1/accounts:update?key=${ctx.apiKey}`,
+        `https://identitytoolkit.googleapis.com/v1/accounts:update?key=${apiKey}`,
 
         {
           displayName: enteredName,
           photoUrl: enteredPhotoUrl,
           returnSecureToken: true,
-          idToken: ctx.idToken,
+          idToken: idToken,
         },
         {
           headers: {
@@ -44,10 +45,10 @@ const ProfileUpdate = () => {
 
   const onVerifyEmailHandler = async () => {
     const response = await axios.post(
-      `https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=${ctx.apiKey}`,
+      `https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=${apiKey}`,
       {
         requestType: "VERIFY_EMAIL",
-        idToken: ctx.idToken,
+        idToken: idToken,
       },
       {
         headers: {
@@ -68,9 +69,9 @@ const ProfileUpdate = () => {
     async function getUserInfo() {
       try {
         const response = await axios.post(
-          `https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=${ctx.apiKey}`,
+          `https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=${apiKey}`,
           {
-            idToken: ctx.idToken,
+            idToken: idToken,
           },
           {
             headers: {
@@ -81,9 +82,8 @@ const ProfileUpdate = () => {
         const data = response.data;
         if (response.status === 200) {
           const { users } = data;
-          users.forEach(
-            (ele) => (
-              (nameRef.current.value = ele.displayName),
+          users.forEach((ele) =>
+            (nameRef.current.value = ele.displayName)(
               (photoUrlRef.current.value = ele.photoUrl)
             )
           );

@@ -1,26 +1,28 @@
-import { useContext, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Container, Card, Form, Button, Alert } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import Context from "../store/context";
+
 import LoadingSpinner from "../Components/LoadingSpinner";
 import ErrorMessage from "../Components/ErrorMessage";
 import axios from "axios";
+import { useSelector } from "react-redux";
 
 const ForgotPassword = () => {
   const emailRef = useRef();
-  const ctx = useContext(Context);
+
   const [confirmMessage, setConfirmMessage] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [show, setShow] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
+  const apiKey = useSelector((state) => state.auth.apiKey);
   const onSubmitHandler = async (e) => {
     try {
       e.preventDefault();
       setIsLoading(true);
       const enteredEmail = emailRef.current.value;
       const response = await axios.post(
-        `https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=${ctx.apiKey}`,
+        `https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=${apiKey}`,
         {
           requestType: "PASSWORD_RESET",
           email: enteredEmail,
