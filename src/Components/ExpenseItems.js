@@ -5,9 +5,10 @@ import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 import { useSelector } from "react-redux";
 const ExpenseItems = (props) => {
   const expenses = useSelector((state) => state.expenses.expenses);
+  const isLoading = useSelector((state) => state.expenses.isLoading);
   return (
     <Container>
-      {props.isLoading ? (
+      {isLoading ? (
         <div className="text-center mt-5">
           <LoadingSpinner />
         </div>

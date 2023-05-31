@@ -11,6 +11,8 @@ import { useRef, useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
 import { addExpense } from "../store/expensesSlice";
+import { activatePremium } from "../store/expensesSlice";
+import DownloadExpenses from "./DownloadExpenses";
 
 const ExpenseForm = (props) => {
   const moneyRef = useRef();
@@ -23,11 +25,11 @@ const ExpenseForm = (props) => {
   const email = useSelector((state) => state.auth.email);
   const userEmail = email.replace(/[.]/g, "");
   const expenses = useSelector((state) => state.expenses.expenses);
-
+  const premium = useSelector((state) => state.expenses.premium);
   const minimum = expenses.reduce((accum, curVal) => {
     return accum + +curVal.money;
   }, 0);
-  console.log(minimum);
+
   const clearInputFields = () => {
     moneyRef.current.value = "";
     descriptionRef.current.value = "";
@@ -41,6 +43,13 @@ const ExpenseForm = (props) => {
     dispatch(addExpense({ expenseItem: [props.item] }));
     clearInputFields();
     setIsEditing(false);
+  };
+
+  const showPremium = false;
+
+  const activatePremiumHandler = () => {
+    dispatch(activatePremium());
+    setShow(false);
   };
 
   const editExpense = useCallback(() => {
@@ -110,15 +119,21 @@ const ExpenseForm = (props) => {
 
   return (
     <Container className="">
-      {minimum > 10000 && (
-        <div className="mx-auto" style={{ maxWidth: "62rem" }}>
-          <Alert variant="success" dismissible onClose={() => setShow(false)}>
-            <div className="d-flex justify-content-between">
-              <p>Go for Premium</p>
-              <Button variant="success">Activate Premium</Button>
-            </div>
-          </Alert>
-        </div>
+      {premium && <DownloadExpenses />}
+      {minimum >= 10000 && (
+        <Alert
+          className="mx-auto mt-2"
+          style={{ maxWidth: "62rem" }}
+          dismissible
+          onClose={() => setShow(false)}
+        >
+          <div className="d-flex justify-content-between">
+            <p className="fw-bold">Go for Premium</p>
+            <Button onClick={activatePremiumHandler} variant="success">
+              Activate Premium
+            </Button>
+          </div>
+        </Alert>
       )}
       <div className="text-center mt-2">
         <Button
@@ -143,7 +158,9 @@ const ExpenseForm = (props) => {
                 lg={"auto"}
                 controlId="formGridMoney"
               >
-                <Form.Label className="fw-bold fs-6">Money Spent</Form.Label>
+                <Form.Label className="fw-bold fs-6 text-dark">
+                  Money Spent
+                </Form.Label>
                 <Form.Control type="number" min={0} ref={moneyRef} required />
               </Form.Group>
               <Form.Group
@@ -152,7 +169,7 @@ const ExpenseForm = (props) => {
                 lg={3}
                 controlId="formGridDescription"
               >
-                <Form.Label className="fw-bold fs-6">
+                <Form.Label className="fw-bold fs-6 text-dark">
                   Expense Description
                 </Form.Label>
                 <Form.Control ref={descriptionRef} type="text" required />
@@ -163,7 +180,9 @@ const ExpenseForm = (props) => {
                 className="mb-2 mb-lg-0"
                 controlId="formGridCategory"
               >
-                <Form.Label className="fw-bold fs-6">Category</Form.Label>
+                <Form.Label className="fw-bold fs-6 text-dark">
+                  Category
+                </Form.Label>
                 <Form.Select
                   ref={categoryRef}
                   aria-label="Default select example"

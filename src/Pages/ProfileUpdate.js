@@ -95,7 +95,7 @@ const ProfileUpdate = () => {
 
   return (
     <Container className="py-3">
-      <Row className="align-items-center border-bottom border-2 border-success pb-3">
+      {/* <Row className="align-items-center border-bottom border-2 border-success pb-3">
         <Col lg="6" className="d-flex ">
           <div className="mx-auto mx-lg-0">
             <h5 className="text-capitalize">
@@ -112,7 +112,10 @@ const ProfileUpdate = () => {
             <span className="fst-italic">Complete Now</span>
           </div>
         </Col>
-      </Row>
+      </Row> */}
+      <div className="d-flex justify-content-end my-2">
+        <Logout />
+      </div>
       {show && (
         <Alert
           style={{ maxWidth: "25rem" }}
@@ -127,23 +130,24 @@ const ProfileUpdate = () => {
           </Button>
         </Alert>
       )}
-      <div className="d-flex justify-content-end my-2">
-        <Logout />
-      </div>
 
-      <Form className="shadow rounded py-3 mt-2" onSubmit={onUpdateProfile}>
-        <div className="text-center pt-4">
+      <Form
+        className="shadow border mx-auto rounded py-3 mt-2"
+        onSubmit={onUpdateProfile}
+        style={{ maxWidth: "65rem" }}
+      >
+        <div className="text-center pb-3">
           <h4 className="fw-bold text-success">Contact Details</h4>
         </div>
 
-        <Row className="mb-3 justify-content-center px-4">
+        <Row className="mb-3 px-4">
           <Form.Group className="" as={Col} lg={4} controlId="formGridEmail">
             <Form.Label className="fw-bold fs-6">
               {" "}
               <i className="bi bi-person-lines-fill fs-5 pe-2 text-warning"></i>{" "}
               Full Name
             </Form.Label>
-            <Form.Control ref={nameRef} type="text" />
+            <Form.Control ref={nameRef} type="text" required />
           </Form.Group>
 
           <Form.Group as={Col} lg={4} controlId="formGridPassword">
@@ -151,14 +155,14 @@ const ProfileUpdate = () => {
               <i className="bi bi-globe fs-5 pe-2 text-warning"></i> Photo
               Profile URL
             </Form.Label>
-            <Form.Control ref={photoUrlRef} type="text" />
+            <Form.Control ref={photoUrlRef} type="text" required />
           </Form.Group>
-          <Col lg="auto" className="align-self-end">
+          <Col lg="2" className="align-self-end">
             <Button type="submit" variant="info" className="mt-4 mt-lg-0 w-100">
               Update
             </Button>
           </Col>
-          <Col lg="auto" className="align-self-end">
+          <Col lg="2" className="align-self-end">
             <Button variant="danger" className="mt-4 mt-lg-0 w-100">
               Cancel
             </Button>
