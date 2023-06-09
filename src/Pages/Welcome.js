@@ -1,32 +1,50 @@
-import { Container, Row, Col } from "react-bootstrap";
-import { Link } from "react-router-dom";
-import Logout from "../Components/Logout";
-import Expenses from "../Components/Expenses";
-import DarkMode from "../Components/DarkMode";
+import { Container, Row, Col, Alert, Button } from "react-bootstrap";
+import Expenses from "../Components/Expenses/Expenses";
+import { useSelector, useDispatch } from "react-redux";
+import { useState } from "react";
+import { activatePremium } from "../store/expensesSlice";
+
 const Welcome = () => {
+  const [show, setShow] = useState(true);
+  const premium = useSelector((state) => state.expenses.premium);
+  const totalExpenses = useSelector((state) => state.expenses.totalExpenses);
+  const dispatch = useDispatch();
+  const activatePremiumHandler = () => {
+    dispatch(activatePremium());
+    setShow(false);
+  };
+
+  const showPremiumButton = totalExpenses > 10000 && !premium;
+
   return (
-    <Container className="">
-      <Row className="align-items-center border-bottom border-2 border-success pb-1 pt-2">
-        <Col lg="6" className="d-flex ">
-          <div className="mx-auto mx-lg-0">
-            <h5>Welcome to Expense Tracker!</h5>
-          </div>
-        </Col>
-        <Col className="d-flex mt-2 mt-md-0" lg={6}>
-          <div className="ms-lg-auto mx-auto mx-lg-0">
-            <h5 className="d-inline pe-3">Your Profile Is Incomplete</h5>
-            <Link to="/profileupdate" className="fst-italic me-4">
-              Complete Now
-            </Link>
-          </div>
-        </Col>
-      </Row>
-      <div className="d-flex justify-content-end align-items-center mt-2 ">
-        <DarkMode />
-        <Logout />
-      </div>
-      <Expenses />
-    </Container>
+    <>
+      <Container fluid>
+        {showPremiumButton && (
+          <Alert
+            className="mx-auto mt-2"
+            style={{ maxWidth: "62rem" }}
+            dismissible
+            onClose={() => setShow(false)}
+            show={show}
+          >
+            <Row className="">
+              <Col lg={9}>
+                <p className="fw-bold">
+                  Your expenses have gone beyond $10000, we suggest you to go
+                  for Premium.
+                </p>
+              </Col>
+              <Col lg={3} className="">
+                <Button onClick={activatePremiumHandler} variant="success">
+                  Activate Premium
+                </Button>
+              </Col>
+            </Row>
+          </Alert>
+        )}
+        <Expenses />
+      </Container>
+    </>
   );
 };
 

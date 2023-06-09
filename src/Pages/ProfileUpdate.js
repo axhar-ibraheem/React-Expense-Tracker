@@ -1,13 +1,20 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Container, Col, Row, Form, Button, Alert } from "react-bootstrap";
-
-import Logout from "../Components/Logout";
+import {
+  Container,
+  Col,
+  Row,
+  Form,
+  Button,
+  Alert,
+  Card,
+  Collapse,
+} from "react-bootstrap";
 import axios from "axios";
 import { useSelector } from "react-redux";
 const ProfileUpdate = () => {
   const nameRef = useRef();
   const photoUrlRef = useRef();
-
+  const [open, setOpen] = useState(false);
   const apiKey = useSelector((state) => state.auth.apiKey);
   const idToken = useSelector((state) => state.auth.idToken);
   const [show, setShow] = useState(true);
@@ -91,11 +98,19 @@ const ProfileUpdate = () => {
       } catch (error) {}
     }
     getUserInfo();
+    setOpen(true);
   }, []);
 
   return (
-    <Container className="py-3">
-      {/* <Row className="align-items-center border-bottom border-2 border-success pb-3">
+    <>
+      {/* <Container className="bg-info" fluid>
+        <div className="d-flex justify-content-end py-3 px-lg-5">
+          <Logout />
+        </div>
+      </Container> */}
+
+      <Container className="py-3">
+        {/* <Row className="align-items-center border-bottom border-2 border-success pb-3">
         <Col lg="6" className="d-flex ">
           <div className="mx-auto mx-lg-0">
             <h5 className="text-capitalize">
@@ -113,63 +128,78 @@ const ProfileUpdate = () => {
           </div>
         </Col>
       </Row> */}
-      <div className="d-flex justify-content-end my-2">
-        <Logout />
-      </div>
-      {show && (
-        <Alert
-          style={{ maxWidth: "25rem" }}
-          variant="danger"
-          onClose={() => setShow(false)}
-          dismissible
-          className="mt-3 mx-auto"
-        >
-          Your email is not verified yet!{" "}
-          <Button variant="danger" onClick={onVerifyEmailHandler}>
-            Verify it
-          </Button>
-        </Alert>
-      )}
 
-      <Form
-        className="shadow border mx-auto rounded py-3 mt-2"
-        onSubmit={onUpdateProfile}
-        style={{ maxWidth: "65rem" }}
-      >
-        <div className="text-center pb-3">
-          <h4 className="fw-bold text-success">Contact Details</h4>
-        </div>
-
-        <Row className="mb-3 px-4">
-          <Form.Group className="" as={Col} lg={4} controlId="formGridEmail">
-            <Form.Label className="fw-bold fs-6">
-              {" "}
-              <i className="bi bi-person-lines-fill fs-5 pe-2 text-warning"></i>{" "}
-              Full Name
-            </Form.Label>
-            <Form.Control ref={nameRef} type="text" required />
-          </Form.Group>
-
-          <Form.Group as={Col} lg={4} controlId="formGridPassword">
-            <Form.Label className="fw-bold fs-6">
-              <i className="bi bi-globe fs-5 pe-2 text-warning"></i> Photo
-              Profile URL
-            </Form.Label>
-            <Form.Control ref={photoUrlRef} type="text" required />
-          </Form.Group>
-          <Col lg="2" className="align-self-end">
-            <Button type="submit" variant="info" className="mt-4 mt-lg-0 w-100">
-              Update
+        {show && (
+          <Alert
+            style={{ maxWidth: "25rem" }}
+            variant="danger"
+            onClose={() => setShow(false)}
+            dismissible
+            className="mt-3 mx-auto"
+          >
+            Your email is not verified yet!{" "}
+            <Button variant="danger" onClick={onVerifyEmailHandler}>
+              Verify it
             </Button>
-          </Col>
-          <Col lg="2" className="align-self-end">
-            <Button variant="danger" className="mt-4 mt-lg-0 w-100">
-              Cancel
-            </Button>
-          </Col>
-        </Row>
-      </Form>
-    </Container>
+          </Alert>
+        )}
+        <Collapse in={open}>
+          <Card
+            style={{ maxWidth: "65rem" }}
+            className="mx-auto text-dark shadow-lg border-0 mt-5"
+          >
+            <Form className="w-100 py-3" onSubmit={onUpdateProfile}>
+              <div className="text-center pb-3">
+                <h4 className="fw-bold text-success">Personal Details</h4>
+              </div>
+
+              <Row className="mb-3 px-4">
+                <Form.Group
+                  className=""
+                  as={Col}
+                  lg={4}
+                  controlId="formGridEmail"
+                >
+                  <Form.Label className="fw-bold fs-6">
+                    {" "}
+                    <i className="bi bi-person-lines-fill fs-5 pe-2 text-warning"></i>{" "}
+                    Full Name
+                  </Form.Label>
+                  <Form.Control ref={nameRef} type="text" required />
+                </Form.Group>
+
+                <Form.Group
+                  as={Col}
+                  lg={4}
+                  className="mt-3 mt-lg-0"
+                  controlId="formGridPassword"
+                >
+                  <Form.Label className="fw-bold fs-6">
+                    <i className="bi bi-globe fs-5 pe-2 text-warning"></i> Photo
+                    Profile URL
+                  </Form.Label>
+                  <Form.Control ref={photoUrlRef} type="text" required />
+                </Form.Group>
+                <Col lg="2" className="align-self-end">
+                  <Button
+                    type="submit"
+                    variant="info"
+                    className="mt-4 mt-lg-0 w-100"
+                  >
+                    Update
+                  </Button>
+                </Col>
+                <Col lg="2" className="align-self-end">
+                  <Button variant="danger" className="mt-4 mt-lg-0 w-100">
+                    Cancel
+                  </Button>
+                </Col>
+              </Row>
+            </Form>
+          </Card>
+        </Collapse>
+      </Container>
+    </>
   );
 };
 

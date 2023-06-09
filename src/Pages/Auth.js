@@ -1,152 +1,90 @@
-import React, { useRef, useState } from "react";
-import { Form, Button, Container, Card } from "react-bootstrap";
-import { useHistory, Link } from "react-router-dom";
-import LoadingSpinner from "../Components/LoadingSpinner";
-import ErrorMessage from "../Components/ErrorMessage";
-import axios from "axios";
-import { login } from "../store/authSlice";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useState } from "react";
+import { Container, Row, Col, ToggleButton } from "react-bootstrap";
+import Login from "../Components/Login/Login";
+import SignUp from "../Components/Login/SignUp";
+import ForgotPassword from "../Components/Login/ForgotPassword";
+import ErrorMessage from "../Components/UI/ErrorMessage";
+import { useSelector } from "react-redux";
+
 const Auth = () => {
-  const [signIn, setSignIn] = useState(true);
-  const [isLoading, setIsLoading] = useState(false);
-  const [show, setShow] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
-  const history = useHistory();
-  const emailRef = useRef();
-  const passwordRef = useRef();
-  const confirmPasswordRef = useRef();
+  const [active, setActive] = useState("login");
+  const errorMessage = useSelector((state) => state.auth.notification);
 
-  const apiKey = useSelector((state) => state.auth.apiKey);
-  const dispatch = useDispatch();
-
-  const onClickHandler = () => {
-    setSignIn(!signIn);
+  const loginSelector = () => {
+    setActive("login");
   };
-
-  const onSubmitHandler = async (e) => {
-    try {
-      e.preventDefault();
-      setIsLoading(true);
-      const enteredEmail = emailRef.current.value;
-      const enteredPassword = passwordRef.current.value;
-      let enteredConfirmPassword;
-
-      if (!signIn) {
-        enteredConfirmPassword = confirmPasswordRef.current.value;
-        if (enteredConfirmPassword !== enteredPassword) {
-          setErrorMessage("Passwords don't match");
-          setShow(true);
-          return;
-        }
-      }
-
-      const endPointUrl = signIn
-        ? `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${apiKey}`
-        : `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${apiKey}`;
-
-      const response = await axios.post(
-        endPointUrl,
-        {
-          email: enteredEmail,
-          password: enteredPassword,
-          returnSecureToken: true,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      const data = response.data;
-      console.log(response.data);
-
-      if (response.status === 200) {
-        if (signIn) {
-          dispatch(login({ idToken: data.idToken, email: data.email }));
-          history.replace("/welcome");
-        } else {
-          setSignIn(true);
-        }
-      }
-    } catch (error) {
-      setErrorMessage(error.response.data.error.message);
-      setShow(true);
-    } finally {
-      setIsLoading(false);
-    }
+  const signupSelector = () => {
+    setActive("signup");
+  };
+  const forgotPasswordSelector = () => {
+    setActive("forgotpassword");
   };
 
   return (
-    <Container
-      className=" d-flex align-items-center justify-content-center"
-      style={{ minHeight: "100vh" }}
-    >
-      <Card style={{ maxWidth: "32rem" }} className=" border-0 w-100">
-        <Form onSubmit={onSubmitHandler} className="pb-4 shadow px-4">
-          <div className="text-center py-3">
-            <h3 className="fw-bold text-success">
-              {signIn ? "Login" : "Sign Up"}
-            </h3>
-          </div>
-          <Form.Group className="mb-3" controlId="formBasicEmail">
-            <Form.Label className="fw-bold">Email address</Form.Label>
-            <Form.Control
-              ref={emailRef}
-              type="email"
-              placeholder="Enter email"
-              required
-            />
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicPassword">
-            <Form.Label className="fw-bold">Password</Form.Label>
-            <Form.Control
-              ref={passwordRef}
-              type="password"
-              placeholder="Password"
-              required
-            />
-          </Form.Group>
-          {!signIn && (
-            <Form.Group className="mb-3" controlId="formBasicConfirmPassword">
-              <Form.Label className="fw-bold">Confirm Password</Form.Label>
-              <Form.Control
-                ref={confirmPasswordRef}
-                type="password"
-                placeholder="Confirm Password"
-                required
-              />
-            </Form.Group>
-          )}
-          {signIn ? (
-            <>
-              {" "}
-              <Button className="w-100 mt-2" variant="success" type="submit">
-                {isLoading ? <LoadingSpinner /> : "Login"}
-              </Button>
-              <div className="mt-2 text-center">
-                <Link className="text-decoration-none" to="/resetPassword">
-                  Forgot Password
-                </Link>
+    <Container className="">
+      <div className="text-center pt-5">
+        <h2 className="">
+          Welcome to{" "}
+          <span className="text-warning fst-italic">Expense Tracker</span>{" "}
+        </h2>
+        <p>Please Login to continue.</p>
+      </div>
+      {errorMessage.message && (
+        <ErrorMessage
+          errorMessage={errorMessage.message}
+          variant={errorMessage.variant}
+        />
+      )}
+      <Row className="mx-auto justify-content-center w-100 mt-5">
+        <Col lg={"auto"} className="bg-light px-0 shadow-lg">
+          <div className="d-flex flex-lg-column justify-content-evenly h-100">
+            <ToggleButton
+              variant="outline-success"
+              className="w-100 h-100 border-0 rounded-0 fw-bold"
+              onClick={loginSelector}
+              type="checkbox"
+              onChange={loginSelector}
+              checked={active === "login"}
+            >
+              <div className="my-lg-3">
+                <i className="bi fs-3 bi-person-check-fill"></i>
+                <p className="mb-0">Login</p>
               </div>
-            </>
-          ) : (
-            <Button className="w-100 mt-2" variant="success" type="submit">
-              {isLoading ? <LoadingSpinner /> : "Sign Up"}
-            </Button>
-          )}
-          {show && (
-            <ErrorMessage errorMessage={errorMessage} setShow={setShow} />
-          )}
-        </Form>
+            </ToggleButton>
 
-        {
-          <div className="text-center mt-3">
-            <Button variant="dark" onClick={onClickHandler}>
-              {signIn ? "First Time, then Sign Up" : "Have an Account? Login"}
-            </Button>
+            <ToggleButton
+              variant="outline-warning"
+              className="w-100 h-100 border-0 rounded-0 fw-bold"
+              onClick={signupSelector}
+              type="checkbox"
+              checked={active === "signup"}
+            >
+              <div className="my-lg-3">
+                <i className="bi fs-3 bi-check-circle-fill"></i>
+                <p className="mb-0">Sign Up</p>
+              </div>
+            </ToggleButton>
+
+            <ToggleButton
+              onClick={forgotPasswordSelector}
+              variant="outline-info"
+              className="w-100 py-auto h-100 border-0 rounded-0 fw-bold"
+              type="checkbox"
+              checked={active === "forgotpassword"}
+            >
+              <div className="my-lg-3">
+                <i className="bi fs-3 bi-key-fill"></i>
+                <p className="pt-0">Forgot Password</p>
+              </div>
+            </ToggleButton>
           </div>
-        }
-      </Card>
+        </Col>
+        <Col lg={5} className="p-3 mt-4 bg-light mt-lg-0 shadow-lg ms-lg-4">
+          {active === "login" && <Login />}
+          {active === "signup" && <SignUp />}
+          {active === "forgotpassword" && <ForgotPassword />}
+        </Col>
+      </Row>
     </Container>
   );
 };
