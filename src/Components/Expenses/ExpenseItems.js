@@ -10,7 +10,7 @@ const ExpenseItems = () => {
   if (filteredExpenses.length === 0) {
     content = (
       <div className="text-center pt-5">
-        <h4>No Expenses Found...</h4>
+        <h4>No Expenses Found!</h4>
       </div>
     );
   }

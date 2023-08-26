@@ -7,7 +7,13 @@ const Mainnav = () => {
   const premium = useSelector((state) => state.expenses.premium);
 
   return (
-    <Navbar collapseOnSelect expand="lg" bg="info" variant="light">
+    <Navbar
+      className="shadow"
+      collapseOnSelect
+      expand="lg"
+      bg="info"
+      variant="light"
+    >
       <Container>
         <Navbar.Brand
           as={Link}

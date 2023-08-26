@@ -1,7 +1,7 @@
 import { Form, Button, FloatingLabel } from "react-bootstrap";
 import LoadingSpinner from "../UI/LoadingSpinner";
 import { useDispatch, useSelector } from "react-redux";
-import { useHistory, Link } from "react-router-dom";
+import { useHistory} from "react-router-dom";
 import axios from "axios";
 import { login } from "../../store/authSlice";
 import React, { useRef } from "react";
@@ -14,6 +14,7 @@ const Login = () => {
   const emailRef = useRef();
   const passwordRef = useRef();
   const apiKey = useSelector((state) => state.auth.apiKey);
+  
   const onSubmitHandler = async (e) => {
     try {
       e.preventDefault();
@@ -52,10 +53,7 @@ const Login = () => {
   };
 
   return (
-    <Form onSubmit={onSubmitHandler} className="text-dark">
-      <div className="text-center py-3">
-        <h3 className="fw-bold text-success">Login</h3>
-      </div>
+    <Form onSubmit={onSubmitHandler} className="text-dark my-4">
       <FloatingLabel
         controlId="floatingEmail"
         className="text-dark"
@@ -82,7 +80,7 @@ const Login = () => {
           required
         />
       </FloatingLabel>
-      <Button className="w-100 my-5" variant="success" type="submit">
+      <Button className="w-100 mt-5" variant="success" type="submit">
         {isLoading ? <LoadingSpinner /> : "Login"}
       </Button>
     </Form>

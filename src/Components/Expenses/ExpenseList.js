@@ -21,11 +21,16 @@ const ExpenseList = (props) => {
   const userEmail = email.replace(/[.]/g, "");
 
   const onDeleteExpenseHandler = async () => {
-    const response = await axios.delete(
-      `https://react-expense-tracker-25b41-default-rtdb.firebaseio.com/expenses${userEmail}/${props.id}.json`
-    );
-    const data = response.data;
-    dispatch(deleteExpense({ id: props.id }));
+    try {
+      await axios.delete(
+        `https://react-expense-tracker-25b41-default-rtdb.firebaseio.com/expenses${userEmail}/${props.id}.json`
+      );
+      dispatch(deleteExpense({ id: props.id }));
+      
+    } catch (error) {
+      console.log(error.message);
+    }
+   
   };
 
   return (

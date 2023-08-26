@@ -1,9 +1,8 @@
 import { Form, Button, FloatingLabel } from "react-bootstrap";
 import LoadingSpinner from "../UI/LoadingSpinner";
-import ErrorMessage from "../UI/ErrorMessage";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
-import React, { useRef, useState } from "react";
+import React, { useRef } from "react";
 import { showNotification } from "../../store/authSlice";
 import { setIsLoading } from "../../store/uiSlice";
 const SignUp = () => {
@@ -43,8 +42,7 @@ const SignUp = () => {
           },
         }
       );
-      const data = response.data;
-
+  
       if (response.status === 200) {
         const message = "Welcome, you can now login with your credentials";
         dispatch(showNotification({ message: message, variant: "info" }));
@@ -58,10 +56,7 @@ const SignUp = () => {
   };
 
   return (
-    <Form onSubmit={onSubmitHandler} className="text-dark">
-      <div className="text-center py-3">
-        <h3 className="fw-bold text-warning">Sign Up</h3>
-      </div>
+    <Form onSubmit={onSubmitHandler} className="text-dark my-3">
       <FloatingLabel controlId="floatingEmail" label="Email">
         <Form.Control
           className="border-0 border-bottom  rounded-0 "

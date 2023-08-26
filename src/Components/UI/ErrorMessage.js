@@ -8,11 +8,11 @@ const ErrorMessage = (props) => {
 
   return (
     <Toast
-      className="mx-auto mt-3"
+      className="mx-auto mt-3 border-0"
       onClose={() =>
         dispatch(showNotification({ message: null, variant: null }))
       }
-      delay={5000}
+      delay={4000}
       bg={props.variant}
       autohide
       show={show}

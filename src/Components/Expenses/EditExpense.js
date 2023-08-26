@@ -50,7 +50,7 @@ const EditExpense = (props) => {
   };
 
   return (
-    <Modal show={props.show} onHide={props.handleClose}>
+    <Modal show={props.show} onHide={props.handleClose} >
       <Modal.Body>
         <Form onSubmit={onSubmitHandler}>
           <Form.Group className="mb-2 mb-lg-0" controlId="formGridMoney">

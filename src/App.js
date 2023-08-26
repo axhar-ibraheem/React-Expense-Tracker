@@ -55,6 +55,7 @@ function App() {
     return () => {
       dispatch(clearExpenses());
     };
+  // eslint-disable-next-line
   }, [userEmail]);
 
   return (
@@ -74,7 +75,7 @@ function App() {
         )}
         {auth && (
           <Route path="/profileupdate">
-            <ProfileUpdate></ProfileUpdate>
+            <ProfileUpdate/> 
           </Route>
         )}
         <Route path="*">

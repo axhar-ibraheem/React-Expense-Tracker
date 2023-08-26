@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef} from "react";
 import { Form, Button, FloatingLabel } from "react-bootstrap";
 import LoadingSpinner from "../UI/LoadingSpinner";
 import axios from "axios";
@@ -43,7 +43,7 @@ const ForgotPassword = () => {
   };
   return (
     <Form onSubmit={onSubmitHandler} className="py-4 text-dark">
-      <div className="text-center pt-4 pb-4">
+      <div className="text-center pt-lg-4 pb-lg-4">
         <h6>Enter your email id with which you have to registered.</h6>
       </div>
       <FloatingLabel
@@ -59,7 +59,7 @@ const ForgotPassword = () => {
           ref={emailRef}
         />
       </FloatingLabel>
-      <div className="text-center my-5">
+      <div className="text-center mt-4 mt-lg-5">
         <Button type="submit" className="w-100" variant="info">
           {isLoading ? <LoadingSpinner /> : "Send Link"}
         </Button>

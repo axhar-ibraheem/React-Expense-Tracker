@@ -21,7 +21,7 @@ const Welcome = () => {
       <Container fluid>
         {showPremiumButton && (
           <Alert
-            className="mx-auto mt-2"
+            className="mx-auto mt-2 border-0"
             style={{ maxWidth: "62rem" }}
             dismissible
             onClose={() => setShow(false)}
@@ -35,7 +35,7 @@ const Welcome = () => {
                 </p>
               </Col>
               <Col lg={3} className="">
-                <Button onClick={activatePremiumHandler} variant="success">
+                <Button onClick={activatePremiumHandler} size="sm" variant="success">
                   Activate Premium
                 </Button>
               </Col>

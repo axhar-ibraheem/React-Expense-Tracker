@@ -9,19 +9,13 @@ import { useSelector } from "react-redux";
 const Auth = () => {
   const [active, setActive] = useState("login");
   const errorMessage = useSelector((state) => state.auth.notification);
-
-  const loginSelector = () => {
-    setActive("login");
-  };
-  const signupSelector = () => {
-    setActive("signup");
-  };
-  const forgotPasswordSelector = () => {
-    setActive("forgotpassword");
-  };
+ 
+  const onSelect = (type) =>{
+   setActive(type)
+  }
 
   return (
-    <Container className="">
+    <Container>
       <div className="text-center pt-5">
         <h2 className="">
           Welcome to{" "}
@@ -36,14 +30,13 @@ const Auth = () => {
         />
       )}
       <Row className="mx-auto justify-content-center w-100 mt-5">
-        <Col lg={"auto"} className="bg-light px-0 shadow-lg">
+        <Col lg={"auto"} className=" px-0 shadow">
           <div className="d-flex flex-lg-column justify-content-evenly h-100">
             <ToggleButton
               variant="outline-success"
               className="w-100 h-100 border-0 rounded-0 fw-bold"
-              onClick={loginSelector}
+              onClick={() => onSelect('login')}
               type="checkbox"
-              onChange={loginSelector}
               checked={active === "login"}
             >
               <div className="my-lg-3">
@@ -55,7 +48,7 @@ const Auth = () => {
             <ToggleButton
               variant="outline-warning"
               className="w-100 h-100 border-0 rounded-0 fw-bold"
-              onClick={signupSelector}
+              onClick={() => onSelect("signup")}
               type="checkbox"
               checked={active === "signup"}
             >
@@ -66,7 +59,7 @@ const Auth = () => {
             </ToggleButton>
 
             <ToggleButton
-              onClick={forgotPasswordSelector}
+              onClick={() => onSelect("forgotpassword")}
               variant="outline-info"
               className="w-100 py-auto h-100 border-0 rounded-0 fw-bold"
               type="checkbox"
@@ -79,7 +72,7 @@ const Auth = () => {
             </ToggleButton>
           </div>
         </Col>
-        <Col lg={5} className="p-3 mt-4 bg-light mt-lg-0 shadow-lg ms-lg-4">
+        <Col lg={5} className="p-3 mt-4 mt-lg-0 shadow ms-lg-4">
           {active === "login" && <Login />}
           {active === "signup" && <SignUp />}
           {active === "forgotpassword" && <ForgotPassword />}
