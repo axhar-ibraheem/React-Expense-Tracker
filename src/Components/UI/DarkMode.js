@@ -5,7 +5,6 @@ import { useSelector, useDispatch } from "react-redux";
 const DarkMode = () => {
   const theme = useSelector((state) => state.theme.theme);
   const dispatch = useDispatch();
-  const buttonTheme = theme === "dark" ? "bg-dark" : "bg-light";
   const label =
     theme === "dark" ? (
       <i className="bi bi-moon-fill"></i>

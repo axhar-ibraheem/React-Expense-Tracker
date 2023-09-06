@@ -55,6 +55,10 @@ const expensesSlice = createSlice({
       state.premium = true;
       localStorage.setItem("premium", state.premium);
     },
+    deactivatePremium: (state) => {
+      state.premium = false;
+      localStorage.removeItem("premium");
+    },
     clearExpenses: (state) => {
       state.expenses = [];
     },
@@ -105,6 +109,7 @@ export const {
   addExpense,
   deleteExpense,
   activatePremium,
+  deactivatePremium,
   clearExpenses,
   displaySpinner,
   addIncome,

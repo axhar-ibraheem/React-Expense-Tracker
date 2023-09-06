@@ -1,23 +1,29 @@
-import { useRef } from "react";
+
 import { Form, Button } from "react-bootstrap";
 import { addIncome } from "../../store/expensesSlice";
 import { useDispatch } from "react-redux";
-
+import useInput from "../../hooks/useInput";
 const Income = () => {
-  const incomeRef = useRef();
   const dispatch = useDispatch();
-
+  const [enteredIncome, incomeInputChangeHandler, resetIncomeState] =
+    useInput();
   const onSubmitHandler = (event) => {
     event.preventDefault();
-    const income = +incomeRef.current.value;
-    dispatch(addIncome(income));
+    dispatch(addIncome(+enteredIncome));
+    resetIncomeState()
   };
 
   return (
     <Form onSubmit={onSubmitHandler} className="shadow rounded p-4">
       <Form.Group className="mb-2 mb-lg-0" controlId="formGridIncome">
         <Form.Label className="fw-bold fs-6">Income</Form.Label>
-        <Form.Control ref={incomeRef} type="number" min={0} required />
+        <Form.Control
+          type="number"
+          min={0}
+          required
+          value={enteredIncome}
+          onChange={incomeInputChangeHandler}
+        />
       </Form.Group>
       <Button type="submit" variant="dark mt-4">
         Add Income

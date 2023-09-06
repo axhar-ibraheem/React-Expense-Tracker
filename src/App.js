@@ -11,11 +11,11 @@ import { clearExpenses } from "./store/expensesSlice";
 import { setTotalExpenses } from "./store/expensesSlice";
 import Mainnav from "./Pages/Mainnav";
 function App() {
-  const auth = useSelector((state) => state.auth.isAuthenticated);
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const email = useSelector((state) => state.auth.email);
 
   let userEmail;
-  if (auth) {
+  if (isAuthenticated) {
     userEmail = email.replace(/[.]/g, "");
   }
   const dispatch = useDispatch();
@@ -59,7 +59,7 @@ function App() {
 
   return (
     <div style={containerStyle}>
-      {auth && <Mainnav />}
+      {isAuthenticated && <Mainnav />}
       <Switch>
         <Route path="/" exact>
           <Redirect to="/auth" />
@@ -67,19 +67,22 @@ function App() {
         <Route path="/auth">
           <Auth />
         </Route>
-        {auth && (
+        {isAuthenticated && (
           <Route Route path="/welcome">
             <Welcome />
           </Route>
         )}
-        {auth && (
+        {isAuthenticated && (
           <Route path="/profileupdate">
             <ProfileUpdate />
           </Route>
         )}
-        <Route path="*">
-          <Redirect to="/" />
-        </Route>
+
+        {isAuthenticated ? (
+          <Redirect from="*" to="/welcome" />
+        ) : (
+          <Redirect from="*" to="/" />
+        )}
       </Switch>
     </div>
   );

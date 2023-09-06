@@ -28,6 +28,7 @@ const authSlice = createSlice({
       localStorage.removeItem("idToken");
       localStorage.removeItem("email");
       localStorage.removeItem("isAuthenticated");
+      localStorage.removeItem("premium")
       state.isAuthenticated = false;
       state.idToken = "";
       state.email = "";

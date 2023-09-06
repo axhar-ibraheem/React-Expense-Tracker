@@ -2,7 +2,7 @@ import { Toast } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
 import { showNotification } from "../../store/authSlice";
 
-const ErrorMessage = (props) => {
+const Notification = (props) => {
   const dispatch = useDispatch();
   const show = useSelector((state) => state.auth.notification);
 
@@ -27,4 +27,4 @@ const ErrorMessage = (props) => {
   );
 };
 
-export default ErrorMessage;
+export default Notification;

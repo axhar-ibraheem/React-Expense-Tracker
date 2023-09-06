@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Container,
   Form,
@@ -7,98 +7,82 @@ import {
   Card,
   Collapse,
 } from "react-bootstrap";
-import axios from "axios";
 import { useSelector } from "react-redux";
+import useHttp from "../hooks/useHttp";
+import useInput from "../hooks/useInput";
+import Notification from "../Components/UI/Notification";
+import { useDispatch } from "react-redux";
+import { showNotification } from "../store/authSlice";
 const ProfileUpdate = () => {
-  const nameRef = useRef();
-  const photoUrlRef = useRef();
+  const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
   const apiKey = useSelector((state) => state.auth.apiKey);
   const idToken = useSelector((state) => state.auth.idToken);
   const [show, setShow] = useState(true);
+  const [enteredName, nameChangeHandler, resetNameState] = useInput();
+  const [enteredPhotoUrl, photoUrlChangeHandler, resetPhotoUrlState] =
+    useInput();
+  const [httpRequest] = useHttp();
+  const notification = useSelector((state) => state.auth.notification);
 
-  const onUpdateProfile = async (e) => {
-    try {
-      e.preventDefault();
-      const enteredName = nameRef.current.value;
-      const enteredPhotoUrl = photoUrlRef.current.value;
-
-      const response = await axios.post(
-        `https://identitytoolkit.googleapis.com/v1/accounts:update?key=${apiKey}`,
-
-        {
-          displayName: enteredName,
-          photoUrl: enteredPhotoUrl,
-          returnSecureToken: true,
-          idToken: idToken,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
+  const onUpdateProfile = (event) => {
+    event.preventDefault();
+    const url = `https://identitytoolkit.googleapis.com/v1/accounts:update?key=${apiKey}`;
+    const userProfileInfo = {
+      displayName: enteredName,
+      photoUrl: enteredPhotoUrl,
+      returnSecureToken: true,
+      idToken: idToken,
+    };
+    const onSuccess = () => {
+      dispatch(
+        showNotification({
+          message: "Profile updated successfully!",
+          variant: "primary",
+        })
       );
-
-      const data = response.data;
-      if (response.status === 200) {
-        console.log(data);
-      }
-    } catch (error) {
-    } finally {
-    }
+    };
+    const onError = () => {
+      dispatch(
+        showNotification({ message: "There was an error!", variant: "danger" })
+      );
+    };
+    httpRequest(url, "POST", userProfileInfo, onSuccess, onError);
   };
 
-  const onVerifyEmailHandler = async () => {
-    try {
-      const response = await axios.post(
-        `https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=${apiKey}`,
-        {
-          requestType: "VERIFY_EMAIL",
-          idToken: idToken,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      
-      if (response.status !== 200) {
-         throw new Error("An error occured")
-      }
-    } catch (error) {
-       alert(error)
+  const onVerifyEmailHandler =  () => {
+    const url =  `https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=${apiKey}`
+    const data = {
+      requestType: "VERIFY_EMAIL",
+      idToken: idToken,
     }
+    const onSuccess = () => {
+          
+    }
+    const onError = () => {
+         alert("There was an error!")
+    }
+    httpRequest(url, "POST", data, onSuccess, onError)
   };
 
   useEffect(() => {
-    async function getUserInfo() {
-      try {
-        const response = await axios.post(
-          `https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=${apiKey}`,
-          {
-            idToken: idToken,
-          },
-          {
-            headers: {
-              "Content-type": "application/json",
-            },
-          }
-        );
-        const data = response.data;
-        if (response.status === 200) {
-          const { users } = data;
-          users.forEach((ele) => {
-            nameRef.current.value = ele.displayName ?? nameRef.current.value;
-            photoUrlRef.current.value =
-              ele.photoUrl ?? photoUrlRef.current.value;
-          });
-        }
-      } catch (error) {}
+    const url = `https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=${apiKey}`
+    const onSuccess = (data) => {
+      const { users } = data;
+      users.forEach((user) => {
+        const name = user.displayName ?? "";
+        resetNameState(name);
+        const photoUrl = user.photoUrl ?? "";
+        resetPhotoUrlState(photoUrl);
+      });
     }
-    getUserInfo();
+    const onError = (errorResponse) => {
+      console.log(errorResponse.error.message)
+      alert("There was an error!")
+    }
+    httpRequest(url, "POST", {idToken:idToken}, onSuccess, onError)
     setOpen(true);
-  // eslint-disable-next-line
+    // eslint-disable-next-line
   }, []);
 
   return (
@@ -132,24 +116,37 @@ const ProfileUpdate = () => {
                 <i className="bi bi-person-lines-fill fs-5 pe-2 text-warning" />{" "}
                 Full Name
               </Form.Label>
-              <Form.Control ref={nameRef} type="text" required />
+              <Form.Control
+                type="text"
+                required
+                value={enteredName}
+                onChange={nameChangeHandler}
+              />
             </Form.Group>
             <Form.Group className="mt-3" controlId="formGridPassword">
               <Form.Label className="fw-bold fs-6">
                 <i className="bi bi-globe fs-5 pe-2 text-warning" />
                 Profile Photo URL
               </Form.Label>
-              <Form.Control ref={photoUrlRef} type="text" required />
+              <Form.Control
+                type="text"
+                required
+                value={enteredPhotoUrl}
+                onChange={photoUrlChangeHandler}
+              />
             </Form.Group>
-            <Button type="submit" variant="info" className="mt-4 w-100">
+            <Button type="submit" variant="primary" className="mt-4 w-100">
               Update
-            </Button>
-            <Button variant="danger" className="mt-4  w-100">
-              Cancel
             </Button>
           </Form>
         </Card>
       </Collapse>
+      {notification.message && (
+        <Notification
+          errorMessage={notification.message}
+          variant={notification.variant}
+        />
+      )}
     </Container>
   );
 };

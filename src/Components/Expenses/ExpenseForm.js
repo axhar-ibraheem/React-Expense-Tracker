@@ -1,50 +1,54 @@
 import { Form, Button, ButtonGroup, ToggleButton } from "react-bootstrap";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { addExpense } from "../../store/expensesSlice";
 import Income from "./Income";
 import { setTotalExpenses } from "../../store/expensesSlice";
 import useHttp from "../../hooks/useHttp";
+import useInput from "../../hooks/useInput";
+
 const ExpenseForm = () => {
-  const moneyRef = useRef();
-  const descriptionRef = useRef();
-  const categoryRef = useRef();
-  const dateRef = useRef();
-  const [onAddExpenseHandler]= useHttp()
+  const [onAddExpenseHandler] = useHttp();
   const [open, setOpen] = useState("expense");
   const dispatch = useDispatch();
   const email = useSelector((state) => state.auth.email);
   const userEmail = email.replace(/[.]/g, "");
-
-  const clearInputFields = () => {
-    moneyRef.current.value = "";
-    descriptionRef.current.value = "";
-  };
+  const [enteredMoney, inputMoneyChangeHandler, resetInputMoneyState] =
+    useInput();
+  const [
+    enteredDescription,
+    inputDescriptionChangeHandler,
+    resetInputDescriptionState,
+  ] = useInput();
+  const [enteredCategory, inputCategoryChangeHandler] = useInput("Food");
+  const [enteredDate, inputDateChangeHandler, resetInputDateState] = useInput();
 
   const endPointUrl = `https://react-expense-tracker-25b41-default-rtdb.firebaseio.com/expenses${userEmail}.json`;
 
-  const onSubmitHandler =  (event) => {
+  const onSubmitHandler = (event) => {
     event.preventDefault();
 
     const expenseItem = {
-      money: moneyRef.current.value,
-      description: descriptionRef.current.value,
-      category: categoryRef.current.value,
-      date: dateRef.current.value,
+      money: enteredMoney,
+      description: enteredDescription,
+      category: enteredCategory,
+      date: enteredDate,
     };
-    const onSuccess = (data)=> {
+    const onSuccess = (data) => {
       let expenseObj = { id: data.name, ...expenseItem };
       dispatch(addExpense({ expenseItem: expenseObj }));
       dispatch(setTotalExpenses());
-      clearInputFields()
-    }
-   const onError = (errorResponse) => {
-          const {message: errorMessage} = errorResponse.error;
-          alert(errorMessage)
-   }
-   onAddExpenseHandler(endPointUrl, "POST", expenseItem, onSuccess, onError)
+      resetInputMoneyState();
+      resetInputDescriptionState();
+      resetInputDateState();
+    };
+    const onError = (errorResponse) => {
+      const { message: errorMessage } = errorResponse.error;
+      alert(errorMessage);
+    };
+    onAddExpenseHandler(endPointUrl, "POST", expenseItem, onSuccess, onError);
   };
-  
+
   const inputSelector = (type) => {
     setOpen(type);
   };
@@ -71,26 +75,36 @@ const ExpenseForm = () => {
         </ButtonGroup>
       </div>
       {open === "expense" && (
-        <Form
-          onSubmit={onSubmitHandler}
-          className="shadow rounded p-4"
-        >
+        <Form onSubmit={onSubmitHandler} className="shadow rounded p-4">
           <Form.Group className="mb-2 mb-lg-0" controlId="formGridMoney">
-            <Form.Label className="fw-bold fs-6">
-              Money Spent
-            </Form.Label>
-            <Form.Control type="number" min={0} ref={moneyRef} required />
+            <Form.Label className="fw-bold fs-6">Money Spent</Form.Label>
+            <Form.Control
+              type="number"
+              min={0}
+              required
+              value={enteredMoney}
+              onChange={inputMoneyChangeHandler}
+            />
           </Form.Group>
           <Form.Group className="mb-2 mb-lg-0" controlId="formGridDescription">
             <Form.Label className="fw-bold fs-6">
               Expense Description
             </Form.Label>
-            <Form.Control ref={descriptionRef} type="text" required />
+            <Form.Control
+              type="text"
+              required
+              value={enteredDescription}
+              onChange={inputDescriptionChangeHandler}
+            />
           </Form.Group>
 
           <Form.Group className="mb-2 mb-lg-0" controlId="formGridCategory">
             <Form.Label className="fw-bold fs-6">Category</Form.Label>
-            <Form.Select ref={categoryRef} aria-label="Default select example">
+            <Form.Select
+              onChange={inputCategoryChangeHandler}
+              value={enteredCategory}
+              aria-label="Default select example"
+            >
               <option value="Food">Food</option>
               <option value="Transportation">Transportation</option>
               <option value="Salary">Salary</option>
@@ -100,7 +114,12 @@ const ExpenseForm = () => {
           </Form.Group>
           <Form.Group className="mb-2 mb-lg-0" controlId="formDate">
             <Form.Label className="fw-bold fs-6">Date</Form.Label>
-            <Form.Control ref={dateRef} type="date" required />
+            <Form.Control
+              type="date"
+              required
+              value={enteredDate}
+              onChange={inputDateChangeHandler}
+            />
           </Form.Group>
 
           <Button type="submit" variant="dark" className="mt-4">

@@ -3,16 +3,14 @@ import { Container, Row, Col, ToggleButton } from "react-bootstrap";
 import Login from "../Components/UserAuth/Login";
 import SignUp from "../Components/UserAuth/SignUp";
 import ForgotPassword from "../Components/UserAuth/ForgotPassword";
-import ErrorMessage from "../Components/UI/ErrorMessage";
+import Notification from "../Components/UI/Notification";
 import { useSelector } from "react-redux";
 const Auth = () => {
   const [active, setActive] = useState("login");
-  const errorMessage = useSelector((state) => state.auth.notification);
-
+  const notification = useSelector((state) => state.auth.notification);
   const onSelect = (type) => {
     setActive(type);
   };
-
   return (
     <Container>
       <div className="text-center pt-5">
@@ -22,10 +20,10 @@ const Auth = () => {
         </h2>
         <p>Please Login to continue.</p>
       </div>
-      {errorMessage.message && (
-        <ErrorMessage
-          errorMessage={errorMessage.message}
-          variant={errorMessage.variant}
+      {notification.message && (
+        <Notification
+          errorMessage={notification.message}
+          variant={notification.variant}
         />
       )}
       <Row className="mx-auto justify-content-center w-100 mt-5">
