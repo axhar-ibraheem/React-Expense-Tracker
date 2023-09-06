@@ -68,7 +68,7 @@ const Login = () => {
           required
         />
       </FloatingLabel>
-      <Button className="w-100 mt-5" variant="success" type="submit">
+      <Button className="w-100 mt-4 mt-lg-5" variant="success" type="submit">
         {show ? <LoadingSpinner /> : "Login"}
       </Button>
     </Form>
