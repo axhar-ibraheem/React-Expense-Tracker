@@ -5,32 +5,30 @@ import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 import EditExpense from "./EditExpense";
 import { useDispatch, useSelector } from "react-redux";
 import { deleteExpense } from "../../store/expensesSlice";
-import axios from "axios";
+import useHttp from "../../hooks/useHttp";
 const ExpenseList = (props) => {
   const [show, setShow] = useState(false);
   const handleShow = () => setShow(true);
   const handleClose = () => setShow(false);
-
+  const [deleteExpenseHandler] = useHttp();
   const date = new Date(props.date);
-  const month = date.toLocaleString("en-US", { month: "long" });
+  const month = date.toLocaleString("en-US", { month: "short" });
   const day = date.toLocaleString("en-US", { day: "2-digit" });
   const year = date.getFullYear();
   const dispatch = useDispatch();
 
   const email = useSelector((state) => state.auth.email);
   const userEmail = email.replace(/[.]/g, "");
+  const endPointUrl = `https://react-expense-tracker-25b41-default-rtdb.firebaseio.com/expenses${userEmail}/${props.id}.json`;
 
-  const onDeleteExpenseHandler = async () => {
-    try {
-      await axios.delete(
-        `https://react-expense-tracker-25b41-default-rtdb.firebaseio.com/expenses${userEmail}/${props.id}.json`
-      );
+  const onDeleteExpenseHandler = () => {
+    const onSuccess = () => {
       dispatch(deleteExpense({ id: props.id }));
-      
-    } catch (error) {
-      console.log(error.message);
-    }
-   
+    };
+    const onError = () => {
+      alert("There was an error!");
+    };
+    deleteExpenseHandler(endPointUrl, "DELETE", null, onSuccess, onError);
   };
 
   return (

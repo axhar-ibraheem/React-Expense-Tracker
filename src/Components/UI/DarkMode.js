@@ -6,7 +6,12 @@ const DarkMode = () => {
   const theme = useSelector((state) => state.theme.theme);
   const dispatch = useDispatch();
   const buttonTheme = theme === "dark" ? "bg-dark" : "bg-light";
-  const label = theme === "dark" ? "Dark" : "Light";
+  const label =
+    theme === "dark" ? (
+      <i className="bi bi-moon-fill"></i>
+    ) : (
+      <i className="bi bi-sun-fill"></i>
+    );
   const toggleThemeHandler = () => {
     dispatch(toggleTheme());
   };
@@ -14,17 +19,16 @@ const DarkMode = () => {
   const checked = theme === "dark" ? true : false;
 
   return (
-    <div className="pe-lg-4 mb-3 mb-lg-0 mt-2 mt-lg-0 ">
+    <div className="mt-2 pe-4 mb-3 mb-lg-0">
       <Form>
-        <div className={`rounded-pill ${buttonTheme} px-3 py-2`}>
-          <Form.Check
-            onChange={toggleThemeHandler}
-            type="switch"
-            id="custom-switch"
-            label={label}
-            checked={checked}
-          />
-        </div>
+        <Form.Check
+          onChange={toggleThemeHandler}
+          type="switch"
+          id="custom-switch"
+          label={label}
+          checked={checked}
+        />
+        
       </Form>
     </div>
   );

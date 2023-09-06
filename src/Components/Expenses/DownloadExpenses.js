@@ -24,7 +24,7 @@ const DownloadExpenses = () => {
   };
 
   return (
-    <Card className="mt-3 mt-lg-0 border-0 shadow bg-info bg-opacity-75 bg-gradient ">
+    <Card className="mt-3 mt-lg-0 border-0 shadow bg-primary bg-opacity-75 bg-gradient ">
       <Card.Body>
         <div className="d-flex justify-content-between align-items-center">
           <div>

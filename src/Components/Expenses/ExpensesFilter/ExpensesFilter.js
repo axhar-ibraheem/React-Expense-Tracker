@@ -1,5 +1,4 @@
 import { ButtonGroup } from "react-bootstrap";
-
 import "react-datepicker/dist/react-datepicker.css";
 import DayPicker from "./DayPicker";
 import MonthPicker from "./MonthPicker";

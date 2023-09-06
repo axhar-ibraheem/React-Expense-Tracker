@@ -22,7 +22,7 @@ function App() {
   const theme = useSelector((state) => state.theme.theme);
 
   const containerStyle = {
-    backgroundColor: theme === "dark" ? "#111" : "#fff",
+    backgroundColor: theme === "dark" ? "#333333" : "#fff",
     color: theme === "dark" ? "#fff" : "#000",
     minHeight: "100vh",
   };
@@ -37,10 +37,9 @@ function App() {
         const data = response.data;
 
         if (response.status === 200) {
-          let arr = [];
           for (const key in data) {
             const obj = { id: key, ...data[key] };
-            arr.push(obj);
+
             dispatch(addExpense({ expenseItem: obj }));
           }
           dispatch(setTotalExpenses());
@@ -55,7 +54,7 @@ function App() {
     return () => {
       dispatch(clearExpenses());
     };
-  // eslint-disable-next-line
+    // eslint-disable-next-line
   }, [userEmail]);
 
   return (
@@ -75,7 +74,7 @@ function App() {
         )}
         {auth && (
           <Route path="/profileupdate">
-            <ProfileUpdate/> 
+            <ProfileUpdate />
           </Route>
         )}
         <Route path="*">

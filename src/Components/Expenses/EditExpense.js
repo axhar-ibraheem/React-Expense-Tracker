@@ -3,13 +3,13 @@ import { useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { addExpense } from "../../store/expensesSlice";
 import { setTotalExpenses } from "../../store/expensesSlice";
-import axios from "axios";
+import useHttp from "../../hooks/useHttp";
 const EditExpense = (props) => {
   const moneyRef = useRef();
   const descriptionRef = useRef();
   const categoryRef = useRef();
   const dateRef = useRef();
-
+  const [onEditExpenseHandler] = useHttp()
   const { item } = props;
 
   const date = new Date(item.date);
@@ -21,9 +21,12 @@ const EditExpense = (props) => {
   const formattedDate = `${year}-${month}-${day}`;
 
   const dispatch = useDispatch();
+  
+  const endPointUrl =  `https://react-expense-tracker-25b41-default-rtdb.firebaseio.com/expenses${userEmail}/${item.id}.json`
+  
+  const onSubmitHandler = (event) => {
+    event.preventDefault();
 
-  const onSubmitHandler = async (e) => {
-    e.preventDefault();
     const expenseItem = {
       money: moneyRef.current.value,
       description: descriptionRef.current.value,
@@ -31,26 +34,23 @@ const EditExpense = (props) => {
       date: dateRef.current.value,
     };
 
-    const response = await axios.put(
-      `https://react-expense-tracker-25b41-default-rtdb.firebaseio.com/expenses${userEmail}/${item.id}.json`,
-      expenseItem,
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-    const data = response.data;
-    if (response.status === 200) {
+    const onSuccess = (data) => {
       const expenseObj = { id: item.id, ...data };
       dispatch(addExpense({ expenseItem: expenseObj }));
       dispatch(setTotalExpenses());
       props.handleClose();
-    } else console.log("error occured");
+    }
+    const onError = (errorResponse) => {
+          const {message : errorMessage} = errorResponse.error
+          alert(errorMessage)
+    }
+
+   onEditExpenseHandler(endPointUrl, "PUT", expenseItem, onSuccess, onError)
+    
   };
 
   return (
-    <Modal show={props.show} onHide={props.handleClose} >
+    <Modal show={props.show} onHide={props.handleClose}>
       <Modal.Body>
         <Form onSubmit={onSubmitHandler}>
           <Form.Group className="mb-2 mb-lg-0" controlId="formGridMoney">

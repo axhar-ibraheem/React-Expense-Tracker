@@ -73,9 +73,7 @@ const expensesSlice = createSlice({
       const { filter, date } = action.payload;
 
       state.date = date;
-
       const enteredDate = new Date(date);
-
       state.expenses.forEach((expense) => {
         const expenseDate = new Date(expense.date);
         state.filter = filter;

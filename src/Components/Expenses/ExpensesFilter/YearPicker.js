@@ -6,7 +6,7 @@ const YearPicker = ({ selectedDate, handleDateChange }) => {
     return (
       <ToggleButton
         type="checkbox"
-        variant="outline-danger"
+        variant="outline-primary"
         className="w-100 rounded-0 rounded-end"
         ref={ref}
         onClick={onClick}

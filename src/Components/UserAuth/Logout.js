@@ -13,7 +13,7 @@ const Logout = () => {
   };
 
   return (
-    <Button onClick={onLogoutHandler} variant="dark">
+    <Button onClick={onLogoutHandler} className="inline" variant="dark">
       Logout
     </Button>
   );

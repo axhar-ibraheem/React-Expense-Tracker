@@ -1,39 +1,38 @@
 import { Navbar, Nav, Container } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import Logout from "../Components/Login/Logout";
+import Logout from "../Components/UserAuth/Logout";
 import DarkMode from "../Components/UI/DarkMode";
 import { useSelector } from "react-redux";
 const Mainnav = () => {
   const premium = useSelector((state) => state.expenses.premium);
-
+  const theme = useSelector((state) => state.theme.theme);
+  const textColor = theme === "dark" ? "text-light" : "text-dark";
   return (
-    <Navbar
-      className="shadow"
-      collapseOnSelect
-      expand="lg"
-      bg="info"
-      variant="light"
-    >
-      <Container>
-        <Navbar.Brand
-          as={Link}
-          to={"/welcome"}
-          className="fw-bold"
-          href="#home"
-        >
+    <Navbar className="shadow" collapseOnSelect expand="lg">
+      <Container className="">
+        <Navbar.Brand className={`fw-bold ${textColor}`}>
           Expense <span className="text-danger">Tracker</span>{" "}
         </Navbar.Brand>
         <Navbar.Toggle
           className="bg-light"
           aria-controls="responsive-navbar-nav"
         />
-        <Navbar.Collapse id="responsive-navbar-nav">
-          <Nav className="ms-auto fw-bold">
-            <Nav.Link as={Link} className="pe-4" to="/profileupdate">
-              My Profile
+        <Navbar.Collapse  id="responsive-navbar-nav">
+          <Nav className="fw-bold ms-auto">
+            <Nav.Link as={Link} className={`pe-4 ${textColor}`} to="/welcome">
+              Home
             </Nav.Link>
-            {premium && <DarkMode />}
-            <Logout />
+            <Nav.Link
+              as={Link}
+              className={`pe-4 ${textColor}`}
+              to="/profileupdate"
+            >
+              Profile
+            </Nav.Link>
+            {premium && <DarkMode />} 
+            <div>
+              <Logout />
+            </div>
           </Nav>
         </Navbar.Collapse>
       </Container>

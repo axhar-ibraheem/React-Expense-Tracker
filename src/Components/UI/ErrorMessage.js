@@ -8,7 +8,7 @@ const ErrorMessage = (props) => {
 
   return (
     <Toast
-      className="mx-auto mt-3 border-0"
+      className="mx-auto mt-3 border-0 position-fixed top-0 start-50 translate-middle-x"
       onClose={() =>
         dispatch(showNotification({ message: null, variant: null }))
       }

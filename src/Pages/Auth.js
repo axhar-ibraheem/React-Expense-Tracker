@@ -1,18 +1,17 @@
 import React, { useState } from "react";
 import { Container, Row, Col, ToggleButton } from "react-bootstrap";
-import Login from "../Components/Login/Login";
-import SignUp from "../Components/Login/SignUp";
-import ForgotPassword from "../Components/Login/ForgotPassword";
+import Login from "../Components/UserAuth/Login";
+import SignUp from "../Components/UserAuth/SignUp";
+import ForgotPassword from "../Components/UserAuth/ForgotPassword";
 import ErrorMessage from "../Components/UI/ErrorMessage";
 import { useSelector } from "react-redux";
-
 const Auth = () => {
   const [active, setActive] = useState("login");
   const errorMessage = useSelector((state) => state.auth.notification);
- 
-  const onSelect = (type) =>{
-   setActive(type)
-  }
+
+  const onSelect = (type) => {
+    setActive(type);
+  };
 
   return (
     <Container>
@@ -34,8 +33,8 @@ const Auth = () => {
           <div className="d-flex flex-lg-column justify-content-evenly h-100">
             <ToggleButton
               variant="outline-success"
-              className="w-100 h-100 border-0 rounded-0 fw-bold"
-              onClick={() => onSelect('login')}
+              className="w-100 h-100 border-0 rounded-0 d-flex align-items-center justify-content-center fw-bold"
+              onClick={() => onSelect("login")}
               type="checkbox"
               checked={active === "login"}
             >
@@ -47,12 +46,12 @@ const Auth = () => {
 
             <ToggleButton
               variant="outline-warning"
-              className="w-100 h-100 border-0 rounded-0 fw-bold"
+              className="w-100 h-100 border-0 d-flex align-items-center justify-content-center rounded-0 fw-bold"
               onClick={() => onSelect("signup")}
               type="checkbox"
               checked={active === "signup"}
             >
-              <div className="my-lg-3">
+              <div className="">
                 <i className="bi fs-3 bi-check-circle-fill"></i>
                 <p className="mb-0">Sign Up</p>
               </div>
@@ -60,14 +59,14 @@ const Auth = () => {
 
             <ToggleButton
               onClick={() => onSelect("forgotpassword")}
-              variant="outline-info"
-              className="w-100 py-auto h-100 border-0 rounded-0 fw-bold"
+              variant="outline-primary"
+              className="w-100 h-100 border-0 rounded-0 fw-bold d-flex align-items-center justify-content-center"
               type="checkbox"
               checked={active === "forgotpassword"}
             >
-              <div className="my-lg-3">
-                <i className="bi fs-3 bi-key-fill"></i>
-                <p className="pt-0">Forgot Password</p>
+              <div className="">
+                <i className="bi fs-3 p-0 bi-key-fill"></i>
+                <p className="pt-0 m-0">Forgot Password</p>
               </div>
             </ToggleButton>
           </div>
