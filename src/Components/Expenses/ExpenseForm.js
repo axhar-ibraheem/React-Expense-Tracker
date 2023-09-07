@@ -27,13 +27,14 @@ const ExpenseForm = () => {
 
   const onSubmitHandler = (event) => {
     event.preventDefault();
-
+    console.log(typeof enteredMoney);
     const expenseItem = {
       money: enteredMoney,
       description: enteredDescription,
       category: enteredCategory,
       date: enteredDate,
     };
+
     const onSuccess = (data) => {
       let expenseObj = { id: data.name, ...expenseItem };
       dispatch(addExpense({ expenseItem: expenseObj }));

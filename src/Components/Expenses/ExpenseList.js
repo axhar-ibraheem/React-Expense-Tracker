@@ -51,7 +51,7 @@ const ExpenseList = (props) => {
         </Col>
 
         <Col md="2" xs={6} className="d-flex">
-          <span className="fw-bold ms-auto ms-md-0 fs-6 text-danger">{`$${props.money}`}</span>
+          <span className="fw-bold ms-auto ms-md-0 fs-6 text-danger">{`$${props.money}`}</span>   
         </Col>
         <Col className="d-flex" md="4" xs={"12"}>
           <div className="ms-auto pt-3 pt-md-0">

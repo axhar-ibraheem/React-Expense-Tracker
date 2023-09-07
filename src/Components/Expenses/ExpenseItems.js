@@ -18,13 +18,13 @@ const ExpenseItems = () => {
 
   return (
     <>
+      <ExpensesFilter />
       {isLoading ? (
         <div className="text-center mt-5">
           <LoadingSpinner />
         </div>
       ) : (
         <div>
-          <ExpensesFilter />
           {content ? (
             content
           ) : (

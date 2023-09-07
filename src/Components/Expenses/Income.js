@@ -1,22 +1,36 @@
-
 import { Form, Button } from "react-bootstrap";
 import { addIncome } from "../../store/expensesSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import useInput from "../../hooks/useInput";
+import useHttp from "../../hooks/useHttp";
 const Income = () => {
   const dispatch = useDispatch();
+  const email = useSelector((state) => state.auth.email);
+  const userEmail = email.replace(/[.]/g, "");
   const [enteredIncome, incomeInputChangeHandler, resetIncomeState] =
     useInput();
+  const [addIncomeHandler] = useHttp();
+  const endPointUrl = `https://react-expense-tracker-25b41-default-rtdb.firebaseio.com/income${userEmail}.json`;
   const onSubmitHandler = (event) => {
     event.preventDefault();
-    dispatch(addIncome(+enteredIncome));
-    resetIncomeState()
+    const data = {
+      totalIncome: enteredIncome,
+    };
+    const onSuccess = () => {
+      dispatch(addIncome(+enteredIncome));
+      resetIncomeState();
+    };
+    const onError = () => {
+      alert("There was an error!");
+    };
+
+    addIncomeHandler(endPointUrl, "POST", data, onSuccess, onError);
   };
 
   return (
     <Form onSubmit={onSubmitHandler} className="shadow rounded p-4">
       <Form.Group className="mb-2 mb-lg-0" controlId="formGridIncome">
-        <Form.Label className="fw-bold fs-6">Income</Form.Label>
+        <Form.Label className="fw-bold fs-6">Total Income</Form.Label>
         <Form.Control
           type="number"
           min={0}

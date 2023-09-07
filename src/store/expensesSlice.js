@@ -68,6 +68,9 @@ const expensesSlice = createSlice({
     addIncome: (state, action) => {
       state.totalIncome = state.totalIncome + action.payload;
     },
+    clearIncome: (state)=>{
+      state.totalIncome = 0;
+    },
     setTotalExpenses: (state) => {
       state.totalExpenses = state.expenses.reduce((acc, currVal) => {
         return acc + +currVal.money;
@@ -75,7 +78,6 @@ const expensesSlice = createSlice({
     },
     filterExpenses: (state, action) => {
       const { filter, date } = action.payload;
-
       state.date = date;
       const enteredDate = new Date(date);
       state.expenses.forEach((expense) => {
@@ -113,6 +115,7 @@ export const {
   clearExpenses,
   displaySpinner,
   addIncome,
+  clearIncome,
   setTotalExpenses,
   filterExpenses,
   clearFilter,

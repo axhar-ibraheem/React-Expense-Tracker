@@ -18,15 +18,18 @@ const ExpensesFilter = () => {
 
   const handleDayChange = (date) => {
     dispatch(selectDay({ day: date.toString() }));
+    console.log(date)
     dispatch(filterExpenses({ date: date.toString(), filter: "day" }));
   };
 
   const handleMonthChange = (date) => {
+    console.log(date)
     dispatch(selectMonth({ month: date.toString() }));
     dispatch(filterExpenses({ date: date.toString(), filter: "month" }));
   };
 
   const handleYearChange = (date) => {
+    console.log(date)
     dispatch(selectYear({ year: date.toString() }));
     dispatch(filterExpenses({ date: date.toString(), filter: "year" }));
   };

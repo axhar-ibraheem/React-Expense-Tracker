@@ -12,69 +12,70 @@ const Auth = () => {
     setActive(type);
   };
   return (
-    <Container>
-      <div className="text-center pt-5">
-        <h2 className="">
-          Welcome to{" "}
-          <span className="text-warning fst-italic">Expense Tracker</span>{" "}
-        </h2>
-        <p>Please Login to continue.</p>
+    <Container className="min-vh-100 d-flex align-items-center justify-content-center">
+      <div className="w-100">
+        <div className="text-center">
+            <h2 className="text-warning fst-italic mb-2">Expense Tracker</h2>{" "}
+            <p className="fs-6 mb-4">
+              Empower Your Financial Journey with Effortless Expense Tracking!
+            </p>
+        </div>
+        {notification.message && (
+          <Notification
+            errorMessage={notification.message}
+            variant={notification.variant}
+          />
+        )}
+        <Row className="justify-content-center mx-auto">
+          <Col lg={"auto"} className="px-0 shadow">
+            <div className="d-flex flex-lg-column justify-content-evenly h-100">
+              <ToggleButton
+                variant="outline-success"
+                className="w-100 h-100 border-0 rounded-0 d-flex align-items-center justify-content-center fw-bold"
+                onClick={() => onSelect("login")}
+                type="checkbox"
+                checked={active === "login"}
+              >
+                <div className="my-lg-3">
+                  <i className="bi fs-3 bi-person-check-fill"></i>
+                  <p className="mb-0">Login</p>
+                </div>
+              </ToggleButton>
+
+              <ToggleButton
+                variant="outline-warning"
+                className="w-100 h-100 border-0 d-flex align-items-center justify-content-center rounded-0 fw-bold"
+                onClick={() => onSelect("signup")}
+                type="checkbox"
+                checked={active === "signup"}
+              >
+                <div className="">
+                  <i className="bi fs-3 bi-check-circle-fill"></i>
+                  <p className="mb-0">Sign Up</p>
+                </div>
+              </ToggleButton>
+
+              <ToggleButton
+                onClick={() => onSelect("forgotpassword")}
+                variant="outline-primary"
+                className="w-100 h-100 border-0 rounded-0 fw-bold d-flex align-items-center justify-content-center"
+                type="checkbox"
+                checked={active === "forgotpassword"}
+              >
+                <div className="">
+                  <i className="bi fs-3 p-0 bi-key-fill"></i>
+                  <p className="pt-0 m-0">Forgot Password</p>
+                </div>
+              </ToggleButton>
+            </div>
+          </Col>
+          <Col lg={5} className="p-3 mt-4 mt-lg-0 shadow ms-lg-4">
+            {active === "login" && <Login />}
+            {active === "signup" && <SignUp />}
+            {active === "forgotpassword" && <ForgotPassword />}
+          </Col>
+        </Row>
       </div>
-      {notification.message && (
-        <Notification
-          errorMessage={notification.message}
-          variant={notification.variant}
-        />
-      )}
-      <Row className="mx-auto justify-content-center w-100 mt-5">
-        <Col lg={"auto"} className=" px-0 shadow">
-          <div className="d-flex flex-lg-column justify-content-evenly h-100">
-            <ToggleButton
-              variant="outline-success"
-              className="w-100 h-100 border-0 rounded-0 d-flex align-items-center justify-content-center fw-bold"
-              onClick={() => onSelect("login")}
-              type="checkbox"
-              checked={active === "login"}
-            >
-              <div className="my-lg-3">
-                <i className="bi fs-3 bi-person-check-fill"></i>
-                <p className="mb-0">Login</p>
-              </div>
-            </ToggleButton>
-
-            <ToggleButton
-              variant="outline-warning"
-              className="w-100 h-100 border-0 d-flex align-items-center justify-content-center rounded-0 fw-bold"
-              onClick={() => onSelect("signup")}
-              type="checkbox"
-              checked={active === "signup"}
-            >
-              <div className="">
-                <i className="bi fs-3 bi-check-circle-fill"></i>
-                <p className="mb-0">Sign Up</p>
-              </div>
-            </ToggleButton>
-
-            <ToggleButton
-              onClick={() => onSelect("forgotpassword")}
-              variant="outline-primary"
-              className="w-100 h-100 border-0 rounded-0 fw-bold d-flex align-items-center justify-content-center"
-              type="checkbox"
-              checked={active === "forgotpassword"}
-            >
-              <div className="">
-                <i className="bi fs-3 p-0 bi-key-fill"></i>
-                <p className="pt-0 m-0">Forgot Password</p>
-              </div>
-            </ToggleButton>
-          </div>
-        </Col>
-        <Col lg={5} className="p-3 mt-4 mt-lg-0 shadow ms-lg-4">
-          {active === "login" && <Login />}
-          {active === "signup" && <SignUp />}
-          {active === "forgotpassword" && <ForgotPassword />}
-        </Col>
-      </Row>
     </Container>
   );
 };

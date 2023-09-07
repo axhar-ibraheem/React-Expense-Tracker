@@ -3,21 +3,15 @@ import Auth from "./Pages/Auth";
 import Welcome from "./Pages/Welcome";
 import ProfileUpdate from "./Pages/ProfileUpdate";
 import { useDispatch, useSelector } from "react-redux";
-import { addExpense } from "./store/expensesSlice";
+import { addExpense, clearExpenses, setTotalExpenses, displaySpinner, addIncome, clearIncome } from "./store/expensesSlice";
 import axios from "axios";
-import { displaySpinner } from "./store/expensesSlice";
 import { useEffect } from "react";
-import { clearExpenses } from "./store/expensesSlice";
-import { setTotalExpenses } from "./store/expensesSlice";
 import Mainnav from "./Pages/Mainnav";
-function App() {
+
+const App = () => {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const email = useSelector((state) => state.auth.email);
-
-  let userEmail;
-  if (isAuthenticated) {
-    userEmail = email.replace(/[.]/g, "");
-  }
+  const userEmail = isAuthenticated ? email.replace(/[.]/g, "") : undefined;
   const dispatch = useDispatch();
   const theme = useSelector((state) => state.theme.theme);
 
@@ -26,33 +20,38 @@ function App() {
     color: theme === "dark" ? "#fff" : "#000",
     minHeight: "100vh",
   };
-
+  const incomeUrl = `https://react-expense-tracker-25b41-default-rtdb.firebaseio.com/income${userEmail}.json`;
+  const expensesUrl = `https://react-expense-tracker-25b41-default-rtdb.firebaseio.com/expenses${userEmail}.json`;
+  const urls = [incomeUrl, expensesUrl]
+ 
   useEffect(() => {
     async function getExpenses() {
-      try {
+       try {
         dispatch(displaySpinner(true));
-        const response = await axios.get(
-          `https://react-expense-tracker-25b41-default-rtdb.firebaseio.com/expenses${userEmail}.json`
-        );
-        const data = response.data;
-
-        if (response.status === 200) {
-          for (const key in data) {
-            const obj = { id: key, ...data[key] };
-
+        const requests = urls.map(url => axios.get(url))
+        const responses = await Promise.all(requests)
+        const {data:expensesData} = responses[1]
+        const {data: incomeData} = responses[0]
+            for (const key in expensesData) {
+            const obj = { id: key, ...expensesData[key] };
             dispatch(addExpense({ expenseItem: obj }));
           }
           dispatch(setTotalExpenses());
+        for(const key in incomeData){
+            const {totalIncome} = {...incomeData[key]}
+           dispatch(addIncome(+totalIncome))
         }
-      } catch (error) {
-        alert(error.message);
-      } finally {
-        dispatch(displaySpinner(false));
-      }
+       } catch (error) {
+         alert("There was an error")
+       }finally{
+        dispatch(displaySpinner(false))
+       }
     }
     getExpenses();
+
     return () => {
       dispatch(clearExpenses());
+      dispatch(clearIncome())
     };
     // eslint-disable-next-line
   }, [userEmail]);
@@ -86,6 +85,6 @@ function App() {
       </Switch>
     </div>
   );
-}
+};
 
 export default App;

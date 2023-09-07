@@ -4,7 +4,7 @@ import { useState } from "react";
 const useHttp = () => {
   const [show, setShow] = useState(false);
 
-  const httpRequest = async (url, method, data = null, onSuccess, onError) => {
+  const httpRequest = async (url, method, data, onSuccess, onError) => {
     try {
       setShow(true);
       const response = await axios({
