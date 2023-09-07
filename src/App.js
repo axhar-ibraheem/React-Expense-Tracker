@@ -3,7 +3,14 @@ import Auth from "./Pages/Auth";
 import Welcome from "./Pages/Welcome";
 import ProfileUpdate from "./Pages/ProfileUpdate";
 import { useDispatch, useSelector } from "react-redux";
-import { addExpense, clearExpenses, setTotalExpenses, displaySpinner, addIncome, clearIncome } from "./store/expensesSlice";
+import {
+  addExpense,
+  clearExpenses,
+  setTotalExpenses,
+  displaySpinner,
+  addIncome,
+  clearIncome,
+} from "./store/expensesSlice";
 import axios from "axios";
 import { useEffect } from "react";
 import Mainnav from "./Pages/Mainnav";
@@ -22,36 +29,36 @@ const App = () => {
   };
   const incomeUrl = `https://react-expense-tracker-25b41-default-rtdb.firebaseio.com/income${userEmail}.json`;
   const expensesUrl = `https://react-expense-tracker-25b41-default-rtdb.firebaseio.com/expenses${userEmail}.json`;
-  const urls = [incomeUrl, expensesUrl]
- 
+  const urls = [incomeUrl, expensesUrl];
+
   useEffect(() => {
     async function getExpenses() {
-       try {
+      try {
         dispatch(displaySpinner(true));
-        const requests = urls.map(url => axios.get(url))
-        const responses = await Promise.all(requests)
-        const {data:expensesData} = responses[1]
-        const {data: incomeData} = responses[0]
-            for (const key in expensesData) {
-            const obj = { id: key, ...expensesData[key] };
-            dispatch(addExpense({ expenseItem: obj }));
-          }
-          dispatch(setTotalExpenses());
-        for(const key in incomeData){
-            const {totalIncome} = {...incomeData[key]}
-           dispatch(addIncome(+totalIncome))
+        const requests = urls.map((url) => axios.get(url));
+        const responses = await Promise.all(requests);
+        const { data: expensesData } = responses[1];
+        const { data: incomeData } = responses[0];
+        for (const key in expensesData) {
+          const obj = { id: key, ...expensesData[key] };
+          dispatch(addExpense({ expenseItem: obj }));
         }
-       } catch (error) {
-         alert("There was an error")
-       }finally{
-        dispatch(displaySpinner(false))
-       }
+        dispatch(setTotalExpenses());
+        for (const key in incomeData) {
+          const { totalIncome } = { ...incomeData[key] };
+          dispatch(addIncome(+totalIncome));
+        }
+      } catch (error) {
+        alert("There was an error");
+      } finally {
+        dispatch(displaySpinner(false));
+      }
     }
     getExpenses();
 
     return () => {
       dispatch(clearExpenses());
-      dispatch(clearIncome())
+      dispatch(clearIncome());
     };
     // eslint-disable-next-line
   }, [userEmail]);
