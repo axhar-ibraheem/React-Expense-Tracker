@@ -1,6 +1,6 @@
-# Expense Tracker Website
+# Expense Tracker 
 
-Welcome to the Expense Tracker website repository! This project showcases a dynamic expense tracking application built with React, React Router, React Bootstrap, and a date picker library. Users can log in, manage their expenses, filter transactions by date, subscribe to premium features, and enable dark mode if their expenses exceed $10,000.
+Welcome to the Expense Tracker web app repository! This project showcases a dynamic expense tracking application built with React, React Router, React Bootstrap, and a date picker library. Users can log in, manage their expenses, filter transactions by date, subscribe to premium features, and enable dark mode if their expenses exceed $10,000.
 
 ## 🌟Table of Contents
 
