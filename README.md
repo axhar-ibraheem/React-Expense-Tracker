@@ -11,7 +11,7 @@ Welcome to the Expense Tracker web app repository! This project showcases a dyna
 
 ## 🌟Description
 
-The Expense Tracker website empowers users to effortlessly track their financial transactions. Users can record expenses and manage their budget. The application provides advanced features like premium subscription, dark mode, and easy expense management.
+The Expense Tracker web app empowers users to effortlessly track their financial transactions. Users can record expenses and manage their budget. The application provides advanced features like premium subscription, dark mode, and easy expense management.
 
 ## 🌟Features
 
